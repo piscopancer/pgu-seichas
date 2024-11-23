@@ -10,7 +10,7 @@ import { useSnapshot } from 'valtio'
 import { z } from 'zod'
 
 const calendar = getCalendars()[0]
-export const timezone = calendar.timeZone ?? 'Europe/Moscow'
+export const timezone = calendar.timeZone!
 
 export function cn(...classLists: ClassNameValue[]): string {
   return twMerge(classLists)

@@ -29,8 +29,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
 
   plugins: [
+    'expo-localization',
     '@prisma/react-native',
-    // 'expo-localization',
     [
       'expo-splash-screen',
       {

@@ -1,4 +1,5 @@
 import { initializeDb } from '@/db'
+import { timezone } from '@/utils'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
@@ -36,6 +37,7 @@ export default function HomeScreen() {
       <BottomSheet>
         <BottomSheetView>
           <Text>XD</Text>
+          <Text>{timezone}</Text>
         </BottomSheetView>
       </BottomSheet>
     </View>
