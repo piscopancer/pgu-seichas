@@ -1,16 +1,17 @@
+import { colors } from '@/utils'
 import { ConfigContext, ExpoConfig } from 'expo/config'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'frank',
+  name: 'pgu-seichas',
   description: 'Расписания занятий в ПГУ',
-  slug: 'frank',
-  scheme: 'frank',
+  slug: 'pgu-seichas',
+  scheme: 'pgu-seichas',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   userInterfaceStyle: 'automatic',
-  backgroundColor: '#ffffff',
+  backgroundColor: colors.neutral[950],
   notification: {
     icon: './src/assets/images/icon.png',
   },
@@ -20,9 +21,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: './src/assets/images/icon.png',
-      backgroundColor: '#ffffff',
+      backgroundColor: colors.neutral[950],
     },
-    package: 'com.piscopancer.frank',
+    package: 'com.piscopancer.pguseichas',
   },
   experiments: {
     typedRoutes: true,
@@ -37,7 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         image: './src/assets/images/splash.png',
         resizeMode: 'contain',
         imageWidth: 200,
-        backgroundColor: '#000000',
+        backgroundColor: colors.neutral[950],
       },
     ],
     // [
