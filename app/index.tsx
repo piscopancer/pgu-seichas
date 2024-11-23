@@ -1,7 +1,8 @@
+import { initializeDb } from '@/db'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 
 SplashScreen.preventAutoHideAsync()
@@ -13,14 +14,19 @@ export default function HomeScreen() {
     'GeistMono-Regular': require('@/assets/fonts/GeistMono-Regular.otf'),
     'GeistMono-Bold': require('@/assets/fonts/GeistMono-Bold.otf'),
   })
+  const [dbInitialized, setDbInitialized] = useState(false)
 
   useEffect(() => {
-    if (fonts) {
+    initializeDb().then(() => setDbInitialized(true))
+  }, [])
+
+  useEffect(() => {
+    if (fonts && dbInitialized) {
       SplashScreen.hideAsync()
     }
-  }, [fonts])
+  }, [fonts, dbInitialized])
 
-  if (!fonts) {
+  if (!fonts || !dbInitialized) {
     return null
   }
 

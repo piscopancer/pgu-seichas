@@ -1,0 +1,52 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.db"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["reactNative", "strictUndefinedChecks"]
+}
+
+model Tutor {
+  id         Int       @id @default(autoincrement())
+  name       String
+  surname    String
+  middlename String
+  rank       String? // null | "assistantTutor" (ассистент) | "tutor" (преподаватель) | "seniorTutor" (старший преподаватель) | "assistantProfessor" (доцент) | "professor" (профессор)
+  subjects   Subject[]
+}
+
+model Subject {
+  id        Int      @id @default(autoincrement())
+  name      String
+  tutorId   Int?
+  tutor     Tutor?   @relation(fields: [tutorId], references: [id], onDelete: SetNull)
+  inLessons Lesson[]
+}
+
+model Lesson {
+  id        Int      @id @default(autoincrement())
+  type      String? // null | "practical" | "seminar" | "lecture"
+  subjectId Int?
+  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  place     String?
+  dayId     Int
+  inDay     Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+}
+
+model Day {
+  id                 Int      @id @default(autoincrement())
+  holiday            Boolean?
+  independentWorkDay Boolean?
+  lessons            Lesson[]
+  scheduleId         Int
+  inSchedule         Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  name      String
+  updatedAt DateTime @default(now())
+  days      Day[]
+}
