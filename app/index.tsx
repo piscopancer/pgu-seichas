@@ -2,7 +2,6 @@ import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
 import { useEffect } from 'react'
 import { Text, View } from 'react-native'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -25,10 +24,8 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaProvider>
-      <View>
-        <Text>SEX</Text>
-      </View>
-    </SafeAreaProvider>
+    <View>
+      <Text className='font-sans text-4xl text-neutral-200'>Illustrator</Text>
+    </View>
   )
 }
