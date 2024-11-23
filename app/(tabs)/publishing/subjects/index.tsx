@@ -5,7 +5,6 @@ import { queryKeys } from '@/query'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import { LucideBookCopy, LucideBookPlus, LucideEdit } from 'lucide-react-native'
-import { useEffect } from 'react'
 import { FlatList, Pressable, ScrollView, View } from 'react-native'
 import { neutral } from 'tailwindcss/colors'
 
@@ -32,14 +31,6 @@ export default function SubjectsScreen() {
     queryKey: queryKeys.subjects,
     queryFn: querySubjects,
   })
-
-  useEffect(() => {
-    try {
-      querySubjects().then(console.log)
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
 
   return (
     <ScrollView overScrollMode='never'>

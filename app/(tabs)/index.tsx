@@ -26,11 +26,11 @@ export default function HomeScreen() {
       </Pressable>
       <Pressable
         className='p-8 bg-neutral-900'
-        // onPress={async () => {
-        //   createTestData()
-        // }}
+        onPress={async () => {
+          // createTestData()
+        }}
       >
-        <Text>kill 5</Text>
+        <Text>create test data</Text>
       </Pressable>
       <Switch
         action={(current) => {

@@ -1,12 +1,12 @@
-import { cn } from '@/utils'
-import { Href, Link, Slot, useSegments } from 'expo-router'
+import { cn, colors } from '@/utils'
+import { Href, Link, Stack, useSegments } from 'expo-router'
 import { LucideCalendarDays, LucideEdit, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
 import { Pressable, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { neutral } from 'tailwindcss/colors'
 
 export default function TabLayout() {
   const publisherRights = true
+  const [, tab] = useSegments()
 
   return (
     <SafeAreaView className='flex-1 bg-neutral-200 dark:bg-black'>
@@ -14,7 +14,7 @@ export default function TabLayout() {
         <Link href={'/settings'} asChild>
           <Pressable
             android_ripple={{
-              color: neutral[700],
+              color: colors.neutral[700],
               radius: 24,
             }}
             className='size-16 flex items-center justify-center'
@@ -24,7 +24,15 @@ export default function TabLayout() {
         </Link>
       </View>
       <View className='flex-1'>
-        <Slot />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'fade',
+            contentStyle: {
+              backgroundColor: colors.neutral[950],
+            },
+          }}
+        />
       </View>
       <View className='h-16 border-t border-neutral-900 flex flex-row'>
         <TabLink segment='' href={'/(tabs)'} icon={LucideHome} />
@@ -43,9 +51,8 @@ function TabLink(props: { href: Href; icon: LucideIcon; segment: NonNullable<Ret
   return (
     <Link asChild href={props.href}>
       <Pressable
-        disabled={active}
         android_ripple={{
-          color: neutral[700],
+          color: colors.neutral[700],
           radius: 70,
         }}
         className='flex-1 flex items-center justify-center'

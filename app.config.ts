@@ -1,5 +1,6 @@
-import { colors } from '@/utils'
 import { ConfigContext, ExpoConfig } from 'expo/config'
+import colors from 'tailwindcss/colors'
+// import { colors } from './src/utils'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,

@@ -9,24 +9,13 @@ import { neutral } from 'tailwindcss/colors'
 
 export default function TutorsScreen() {
   const allTutorsQuery = useTutorsQuery()
-  // const x = useSharedValue(0)
-  // const xSlow = useDerivedValue(() => x.value * 0.5)
-  // const drag = Gesture.Pan()
-  //   .onChange((e) => {
-  //     // console.log('total x', e.translationX)
-  //     // console.log('change x', e.changeX)
-  //     x.value = e.translationX
-  //   })
-  //   .onEnd((e) => {
-  //     x.value = withTiming(0, { duration: 150, easing: Easing.in(Easing.ease) })
-  //   })
 
   return (
     <ScrollView overScrollMode='never'>
       <Link asChild href={'/(tabs)/publishing/tutors/create'}>
-        <Pressable android_ripple={{ color: neutral[600] }} className='bg-neutral-950 py-8 px-6'>
-          <LucideUserRoundPlus strokeWidth={1} className='color-neutral-500 size-12 self-center mb-4' />
-          <Text className='dark text-center text-lg'>Добавить преподавателя</Text>
+        <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center'>
+          <LucideUserRoundPlus strokeWidth={1} className='color-neutral-600 size-8 mr-5' />
+          <Text className='text-lg'>Добавить преподавателя</Text>
         </Pressable>
       </Link>
       <TextInput className='m-4' placeholder='Поиск...' />
@@ -37,12 +26,21 @@ export default function TutorsScreen() {
       <FlatList
         scrollEnabled={false}
         data={allTutorsQuery.data ?? []}
-        renderItem={(tutor) => (
-          <Link asChild href={`/(tabs)/publishing/tutors/${tutor.item.id}`}>
-            <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[800] }}>
-              <Text className='mr-auto'>
-                {tutor.item.rank && <Text className='dark:text-neutral-500'>({ranksInfo[tutor.item.rank as Rank].short})</Text>} {tutor.item.surname} {tutor.item.name} {tutor.item.middlename}
-              </Text>
+        renderItem={({ item: tutor }) => (
+          <Link asChild href={`/(tabs)/publishing/tutors/${tutor.id}`}>
+            <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[700] }}>
+              <View className='mr-auto'>
+                <Text className='text-lg mb-2'>
+                  {tutor.surname}{' '}
+                  <Text className='dark:text-neutral-500'>
+                    {tutor.name} {tutor.middlename}
+                  </Text>
+                </Text>
+                <View className='flex-row gap-2'>
+                  <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{tutor.rank ? ranksInfo[tutor.rank as Rank].short : 'Должность не указана'}</Text>
+                  <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{tutor._count.subjects} предм.</Text>
+                </View>
+              </View>
               <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />
             </Pressable>
           </Link>

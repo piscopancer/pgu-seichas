@@ -2,7 +2,6 @@ import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
 import { queryKeys } from '@/query'
-import { zonedDate } from '@/utils'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale/ru'
@@ -21,7 +20,11 @@ async function querySchedules() {
         select: {
           _count: {
             select: {
-              lessons: true,
+              lessons: {
+                where: {
+                  subject: { isNot: null },
+                },
+              },
             },
           },
         },
@@ -62,7 +65,7 @@ export default function SchedulesScreen() {
                   <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule.days.map((d) => d._count.lessons).reduce((l, r) => l + r)} пар</Text>
                 </View>
                 <Text className='dark:text-neutral-500'>
-                  Обновлено {format(zonedDate(schedule.updatedAt), 'd MMMM yyyy', { locale: ru })} в {format(zonedDate(schedule.updatedAt), 'hh:mm')}
+                  Обновлено {format(schedule.updatedAt, 'd MMMM yyyy', { locale: ru })} в {format(schedule.updatedAt, 'HH:mm')}
                 </Text>
               </View>
               <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />

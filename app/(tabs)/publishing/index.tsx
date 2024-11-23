@@ -16,7 +16,7 @@ export default function PublishingScreen() {
     queryFn: () => db.subject.count(),
   })
   const schedulesCountQuery = useQuery({
-    queryKey: ['schedule', 'count'],
+    queryKey: ['schedules', 'count'],
     queryFn: () => db.schedule.count(),
   })
 

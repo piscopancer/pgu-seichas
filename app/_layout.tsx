@@ -8,7 +8,7 @@ import { PortalProvider } from '@gorhom/portal'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 // import * as notifications from 'expo-notifications'
-import { Slot } from 'expo-router'
+import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { cssInterop } from 'nativewind'
 import { useEffect, useState } from 'react'
@@ -115,23 +115,7 @@ export default function RootLayout() {
         <GestureHandlerRootView>
           <PortalProvider>
             <BottomSheetModalProvider>
-              <Slot />
-              {/* <Stack>3
-              <Stack.Screen name='+not-found' />
-              <Stack.Screen
-                name='(tabs)'
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name='settings'
-                options={{
-                  presentation: 'modal',
-                  headerShown: false,
-                }}
-              />
-            </Stack> */}
+              <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom' }} />
             </BottomSheetModalProvider>
           </PortalProvider>
         </GestureHandlerRootView>

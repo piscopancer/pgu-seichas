@@ -36,7 +36,9 @@ export function zonedToGmtTime(timeZone: string, date: Date): Date {
 
 export function zonedDate(date: Date = new Date()): Date {
   const offset = getTimezoneOffset(timezone, date)
+  // console.log(`date [${date.toISOString()}], offset [${offset / 1000}s], tz [${timezone}]`)
   const zonedTime = addMilliseconds(date, offset)
+  // console.log(`zoned: ${zonedTime.toISOString()}`)
   return zonedTime
 }
 
