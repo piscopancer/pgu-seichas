@@ -1,3 +1,4 @@
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
 import { useFonts } from 'expo-font'
 import { SplashScreen } from 'expo-router'
 import { useEffect } from 'react'
@@ -24,8 +25,13 @@ export default function HomeScreen() {
   }
 
   return (
-    <View>
+    <View className='flex-1'>
       <Text className='font-sans text-4xl text-neutral-200'>Illustrator</Text>
+      <BottomSheet>
+        <BottomSheetView>
+          <Text>XD</Text>
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   )
 }

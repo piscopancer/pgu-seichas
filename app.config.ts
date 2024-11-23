@@ -27,6 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   experiments: {
     typedRoutes: true,
   },
+
   plugins: [
     // '@prisma/react-native',
     // 'expo-localization',
