@@ -8,8 +8,6 @@ export function useBottomSheetRef() {
   return useRef<RNBottomSheet>(null)
 }
 
-export type SheetComponentType = typeof RNBottomSheet
-
 export type BottomSheetForwardedRef = ForwardedRef<RNBottomSheet>
 
 export const BottomSheet = forwardRef(({ children, ...props }: BottomSheetProps, ref: BottomSheetForwardedRef) => {

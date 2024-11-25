@@ -146,12 +146,12 @@ export default function SubjectScreen() {
                     ...(changedTutorId === null
                       ? {
                           disconnect: {
-                            id: subjectQuery.data?.tutor?.id ?? Prisma.skip,
+                            id: subjectQuery.data?.tutor?.id ?? undefined,
                           },
                         }
                       : {
                           connect: {
-                            id: changedTutorId ?? Prisma.skip,
+                            id: changedTutorId ?? undefined,
                           },
                         }),
                   },

@@ -1,6 +1,8 @@
 import { Prisma } from '@prisma/client/react-native'
 import { differenceInMinutes, isAfter, startOfToday } from 'date-fns'
 import { getTimezoneOffset } from 'date-fns-tz'
+import { db } from './db'
+import { ScheduleStore } from './store/schedule'
 import { timezone } from './utils'
 
 export const weekdays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'] as const
@@ -101,4 +103,70 @@ export function nextLesson(lessons: Lesson[]): NextLesson | null {
     lesson,
     minutesRemaining,
   }
+}
+
+export async function querySchedule(id: number) {
+  return db.schedule.findFirst({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      days: {
+        select: {
+          id: true,
+          holiday: true,
+          independentWorkDay: true,
+          lessons: {
+            select: {
+              id: true,
+              place: true,
+              subjectId: true,
+              type: true,
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
+export type UpdateScheduleStore = NonNullable<Awaited<ReturnType<typeof querySchedule>>>
+
+export async function updateSchedule(id: number, updatedSchedule: ScheduleStore) {
+  return db.schedule.update({
+    where: {
+      id,
+    },
+    data: {
+      updatedAt: new Date(),
+      days: {
+        update: updatedSchedule.days.map((day) => ({
+          where: {
+            id: day.id,
+          },
+          data: {
+            holiday: day.holiday ?? undefined,
+            independentWorkDay: day.independentWorkDay ?? undefined,
+            lessons: {
+              update: day.lessons.map(
+                (lesson) =>
+                  ({
+                    data: {
+                      subjectId: lesson.subjectId !== undefined ? lesson.subjectId : undefined,
+                      place: lesson.place ?? undefined,
+                      type: lesson.type ?? undefined,
+                    },
+                    where: {
+                      id: lesson.id,
+                    },
+                  } satisfies Prisma.LessonUpdateWithWhereUniqueWithoutInDayInput | Prisma.LessonUpdateWithWhereUniqueWithoutInDayInput)
+              ),
+            },
+          },
+        })),
+      },
+    },
+  })
 }

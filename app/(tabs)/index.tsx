@@ -27,7 +27,7 @@ export default function HomeScreen() {
       <Pressable
         className='p-8 bg-neutral-900'
         onPress={async () => {
-          // createTestData()
+          // createTestData
         }}
       >
         <Text>create test data</Text>

@@ -34,7 +34,7 @@ export default function SubjectsScreen() {
 
   return (
     <ScrollView overScrollMode='never'>
-      <Link asChild href={'/(tabs)/publishing/tutors/create'}>
+      <Link asChild href={'/(tabs)/publishing/subjects/create'}>
         <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center'>
           <LucideBookPlus strokeWidth={1} className='color-neutral-600 size-8 mr-5' />
           <Text className='text-lg'>Добавить предмет</Text>

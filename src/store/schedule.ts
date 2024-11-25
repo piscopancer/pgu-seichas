@@ -1,17 +1,27 @@
 import { maxLessons, weekdays } from '@/schedule'
+import { fillArray } from '@/utils'
 import { Prisma } from '@prisma/client'
 import { proxy } from 'valtio'
+import { deepClone } from 'valtio/utils'
 
-export type ScheduleToCreate = {
+/** Update if `id` is present, create otherwise */
+export type ScheduleStore = {
+  id?: number
   name: string
-  days: (Pick<Prisma.DayCreateArgs['data'], 'holiday' | 'independentWorkDay'> & {
-    lessons: Pick<Prisma.LessonCreateArgs['data'], 'place' | 'type' | 'subjectId'>[]
+  days: (Pick<Prisma.DayCreateArgs['data'], 'id' | 'holiday' | 'independentWorkDay'> & {
+    lessons: Pick<Prisma.LessonCreateArgs['data'], 'id' | 'place' | 'type' | 'subjectId'>[]
   })[]
 }
 
-export const scheduleStore = proxy<ScheduleToCreate>({
+export const defaultCommonSchedule: ScheduleStore = {
   name: '',
-  days: weekdays.map(() => ({
-    lessons: Array.from({ length: maxLessons }).map(() => ({})),
-  })),
-})
+  days: fillArray([], weekdays.length, {
+    lessons: fillArray([], maxLessons, {}),
+  }),
+}
+
+export const defaultCommonScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))
+
+export const createScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))
+
+export const updateScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))

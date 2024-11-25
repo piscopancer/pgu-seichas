@@ -16,6 +16,21 @@ async function querySchedules() {
       id: true,
       name: true,
       updatedAt: true,
+      _count: {
+        select: {
+          days: {
+            where: {
+              lessons: {
+                some: {
+                  subject: {
+                    isNot: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       days: {
         select: {
           _count: {
@@ -56,12 +71,12 @@ export default function SchedulesScreen() {
         scrollEnabled={false}
         data={schedulesQuery.data ?? []}
         renderItem={({ item: schedule }) => (
-          <Link asChild href={`/(tabs)/publishing/subjects/${schedule.id}`}>
+          <Link asChild href={`/(tabs)/publishing/schedules/${schedule.id}`}>
             <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[700] }}>
               <View className='flex-1 mr-4'>
                 <Text className='mb-2 line-clamp-1 mr-auto text-lg'>{schedule.name}</Text>
                 <View className='flex-row gap-2 mb-3'>
-                  <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule.days.length} дней</Text>
+                  <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule._count.days} дней</Text>
                   <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule.days.map((d) => d._count.lessons).reduce((l, r) => l + r)} пар</Text>
                 </View>
                 <Text className='dark:text-neutral-500'>

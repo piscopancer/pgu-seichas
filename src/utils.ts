@@ -9,6 +9,21 @@ import { DefaultColors } from 'tailwindcss/types/generated/colors'
 import { useSnapshot } from 'valtio'
 import { z } from 'zod'
 
+export type StrictOmit<T extends { [K in keyof object]: unknown }, K extends keyof T> = Omit<T, K>
+
+export async function wait(seconds: number) {
+  return new Promise((res) => setTimeout(res, seconds * 1000))
+}
+
+export function randomFromArray<T>(array: T[]): T {
+  const randomIndex = Math.floor(Math.random() * array.length)
+  return array[randomIndex]
+}
+
+export function assignObject<T extends {} | undefined>(obj: T, newObj: T) {
+  obj ? Object.assign(obj, newObj) : () => (obj = newObj)
+}
+
 const calendar = getCalendars()[0]
 export const timezone = calendar.timeZone!
 
@@ -22,6 +37,14 @@ export function objectEntries<O extends object>(obj?: O) {
 
 export function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export function fillArray<I, F>(items: I[], to: number, filler: F): (I | F)[] {
+  const filledArray = Array.from({ length: to }, () => filler) as (I | F)[]
+  for (let i = 0; i < items.length; i++) {
+    filledArray[i] = items[i]
+  }
+  return filledArray
 }
 
 export function useTheme() {

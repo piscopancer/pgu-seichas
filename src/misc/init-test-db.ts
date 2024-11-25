@@ -1,4 +1,6 @@
 // import { PrismaClient } from '@prisma/client'
+import { maxLessons } from '@/schedule'
+import { fillArray } from '@/utils'
 import { db } from '../db'
 import { ranks } from '../tutor'
 
@@ -158,28 +160,32 @@ export async function createTestData() {
           scheduleId: spstedScheduleId,
           lessons: {
             createMany: {
-              data: [
-                {
-                  subjectId: lebedeva_angl.id,
-                  place: '406 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: lebedeva_angl.id,
-                  place: '406 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: brodskaya_kit.id,
-                  place: '217 ИПРиМ',
-                  type: 'seminar' satisfies LessonType,
-                },
-                {
-                  subjectId: liubogoshev_kit.id,
-                  place: '426 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-              ],
+              data: fillArray(
+                [
+                  {
+                    subjectId: lebedeva_angl.id,
+                    place: '406 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: lebedeva_angl.id,
+                    place: '406 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: brodskaya_kit.id,
+                    place: '217 ИПРиМ',
+                    type: 'seminar' satisfies LessonType,
+                  },
+                  {
+                    subjectId: liubogoshev_kit.id,
+                    place: '426 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                ],
+                maxLessons,
+                {}
+              ),
             },
           },
         },
@@ -188,6 +194,11 @@ export async function createTestData() {
         data: {
           scheduleId: spstedScheduleId,
           independentWorkDay: true,
+          lessons: {
+            createMany: {
+              data: fillArray([], maxLessons, {}),
+            },
+          },
         },
       })
       const wed = await tx.day.create({
@@ -195,33 +206,37 @@ export async function createTestData() {
           scheduleId: spstedScheduleId,
           lessons: {
             createMany: {
-              data: [
-                {
-                  subjectId: nastaeva_angl.id,
-                  place: '418 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: osadchiy_phis.id,
-                  place: 'Спортзал ПГУ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: lebedeva_angl.id,
-                  place: '406 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: kerme_angl.id,
-                  place: '303 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: liubogoshev_kit.id,
-                  place: '429 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-              ],
+              data: fillArray(
+                [
+                  {
+                    subjectId: nastaeva_angl.id,
+                    place: '418 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: osadchiy_phis.id,
+                    place: 'Спортзал ПГУ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: lebedeva_angl.id,
+                    place: '406 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: kerme_angl.id,
+                    place: '303 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: liubogoshev_kit.id,
+                    place: '429 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                ],
+                maxLessons,
+                {}
+              ),
             },
           },
         },
@@ -231,33 +246,37 @@ export async function createTestData() {
           scheduleId: spstedScheduleId,
           lessons: {
             createMany: {
-              data: [
-                {
-                  subjectId: osadchiy_phis.id,
-                  place: 'Зал настольного тенниса',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: savtiriova_kit.id,
-                  place: '309 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: sarkisyan_ang.id,
-                  place: '302 ИПРиМ',
-                  type: 'seminar' satisfies LessonType,
-                },
-                {
-                  subjectId: nastaeva_angl.id,
-                  place: '307 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {
-                  subjectId: liubogoshev_kit.id,
-                  place: '309 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-              ],
+              data: fillArray(
+                [
+                  {
+                    subjectId: osadchiy_phis.id,
+                    place: 'Зал настольного тенниса',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: savtiriova_kit.id,
+                    place: '309 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: sarkisyan_ang.id,
+                    place: '302 ИПРиМ',
+                    type: 'seminar' satisfies LessonType,
+                  },
+                  {
+                    subjectId: nastaeva_angl.id,
+                    place: '307 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {
+                    subjectId: liubogoshev_kit.id,
+                    place: '309 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                ],
+                maxLessons,
+                {}
+              ),
             },
           },
         },
@@ -267,24 +286,28 @@ export async function createTestData() {
           scheduleId: spstedScheduleId,
           lessons: {
             createMany: {
-              data: [
-                {
-                  subjectId: karatseva_angl.id,
-                  place: '400 ИПРиМ',
-                  type: 'seminar' satisfies LessonType,
-                },
-                {
-                  subjectId: saakova_angl.id,
-                  place: '421 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-                {},
-                {
-                  subjectId: savchenko_ling.id,
-                  place: '217 ИПРиМ',
-                  type: 'lecture' satisfies LessonType,
-                },
-              ],
+              data: fillArray(
+                [
+                  {
+                    subjectId: karatseva_angl.id,
+                    place: '400 ИПРиМ',
+                    type: 'seminar' satisfies LessonType,
+                  },
+                  {
+                    subjectId: saakova_angl.id,
+                    place: '421 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                  {},
+                  {
+                    subjectId: savchenko_ling.id,
+                    place: '217 ИПРиМ',
+                    type: 'lecture' satisfies LessonType,
+                  },
+                ],
+                maxLessons,
+                {}
+              ),
             },
           },
         },
@@ -294,14 +317,18 @@ export async function createTestData() {
           scheduleId: spstedScheduleId,
           lessons: {
             createMany: {
-              data: [
-                {},
-                {
-                  subjectId: lebedeva_angl.id,
-                  place: '406 ИПРиМ',
-                  type: 'practical' satisfies LessonType,
-                },
-              ],
+              data: fillArray(
+                [
+                  {},
+                  {
+                    subjectId: lebedeva_angl.id,
+                    place: '406 ИПРиМ',
+                    type: 'practical' satisfies LessonType,
+                  },
+                ],
+                maxLessons,
+                {}
+              ),
             },
           },
         },
