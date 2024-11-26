@@ -7,6 +7,6 @@ export const queryKeys = {
   tutor: (id: number) => [...queryKeys.tutors, id],
   subjects: ['subjects'],
   subject: (id: number) => [...queryKeys.subjects, id],
-  schedules: ['schedules'],
-  schedule: (id: number) => [...queryKeys.schedules, id],
+  schedules: (filters?: { search?: string }) => ['schedules', filters],
+  schedule: (id: number) => [...queryKeys.schedules(), id],
 } as const

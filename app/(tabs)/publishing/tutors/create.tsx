@@ -26,7 +26,7 @@ export default function CreateTutor() {
     mutationFn: createTutor,
     onSuccess(data) {
       console.log('created', data)
-      router.push('/(tabs)/publishing/tutors')
+      router.replace('/(tabs)/publishing/tutors')
     },
   })
 

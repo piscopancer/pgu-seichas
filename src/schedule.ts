@@ -92,6 +92,108 @@ export function getMinsToNextLesson(): number | null {
   return minutesRemaining
 }
 
+export async function querySchedules(filters?: { search?: string }) {
+  return db.schedule.findMany({
+    ...(filters && filters.search
+      ? {
+          where: {
+            OR: [
+              {
+                name: {
+                  contains: filters.search,
+                },
+              },
+              {
+                days: {
+                  some: {
+                    lessons: {
+                      some: {
+                        OR: [
+                          {
+                            place: {
+                              contains: filters.search,
+                            },
+                          },
+                          {
+                            subject: {
+                              OR: [
+                                {
+                                  name: {
+                                    contains: filters.search,
+                                  },
+                                },
+                                {
+                                  tutor: {
+                                    OR: [
+                                      {
+                                        name: {
+                                          contains: filters.search,
+                                        },
+                                      },
+                                      {
+                                        surname: {
+                                          contains: filters.search,
+                                        },
+                                      },
+                                      {
+                                        middlename: {
+                                          contains: filters.search,
+                                        },
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        }
+      : {}),
+    select: {
+      id: true,
+      name: true,
+      updatedAt: true,
+      _count: {
+        select: {
+          days: {
+            where: {
+              lessons: {
+                some: {
+                  subject: {
+                    isNot: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      days: {
+        select: {
+          _count: {
+            select: {
+              lessons: {
+                where: {
+                  subject: { isNot: null },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
+// export type ScheduleForCard = NonNullable<Awaited<ReturnType<typeof querySchedules>>>[number]
+
 export async function querySchedule(id: number) {
   return db.schedule.findFirst({
     where: {

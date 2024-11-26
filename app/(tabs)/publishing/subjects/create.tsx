@@ -19,7 +19,7 @@ export default function SubjectScreen() {
     mutationFn: (subject: Prisma.SubjectCreateArgs) => db.subject.create(subject),
     onSuccess() {
       qc.invalidateQueries({ queryKey: queryKeys.subjects })
-      router.back()
+      router.replace('/(tabs)/publishing/subjects')
     },
   })
   const tutorsQuery = useTutorsQuery()
