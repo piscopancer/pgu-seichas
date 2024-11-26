@@ -1,4 +1,4 @@
-import ScheduleView from '@/components/schedule-view'
+import ScheduleView from '@/components/schedule-view/schedule-view'
 import { queryKeys } from '@/query'
 import { querySchedule } from '@/schedule'
 import { defaultCommonScheduleStore, updateScheduleStore } from '@/store/schedule'

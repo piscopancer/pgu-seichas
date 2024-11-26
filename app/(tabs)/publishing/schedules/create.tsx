@@ -1,4 +1,4 @@
-import ScheduleView from '@/components/schedule-view'
+import ScheduleView from '@/components/schedule-view/schedule-view'
 import { createScheduleStore, defaultCommonSchedule } from '@/store/schedule'
 import { useEffect } from 'react'
 import { deepClone } from 'valtio/utils'

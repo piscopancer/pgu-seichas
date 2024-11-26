@@ -53,7 +53,7 @@ export default function SubjectsScreen() {
             <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[700] }}>
               <View className='flex-1 mr-4'>
                 <Text className='mb-1 line-clamp-1 mr-auto text-lg'>{subject.name}</Text>
-                <Text className='dark:text-neutral-500'>{subject.tutor ? `${subject.tutor.surname} ${subject.tutor.name[0]}. ${subject.tutor.middlename[0]}.` : 'Преподаватель не назначен'}</Text>
+                <Text className='dark:text-neutral-500'>{subject.tutor ? `${subject.tutor.surname} ${subject.tutor.name[0]}. ${subject.tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
               </View>
               <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />
             </Pressable>
