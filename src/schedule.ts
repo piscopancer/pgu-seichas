@@ -19,41 +19,38 @@ type LessonsTimestamps = {
   to: { h: number; m: number }
 }[]
 
-function getLessonsTimestamps(timezone: string): LessonsTimestamps {
-  const hOffset = getTimezoneOffset(timezone) / (1000 * 60 * 60)
+const hOffset = getTimezoneOffset(timezone) / (1000 * 60 * 60)
 
-  return [
-    {
-      from: { h: 8 - hOffset, m: 30 },
-      to: { h: 10 - hOffset, m: 0 },
-    },
-    {
-      from: { h: 10 - hOffset, m: 10 },
-      to: { h: 11 - hOffset, m: 40 },
-    },
-    {
-      from: { h: 12 - hOffset, m: 20 },
-      to: { h: 13 - hOffset, m: 50 },
-    },
-    {
-      from: { h: 14 - hOffset, m: 0 },
-      to: { h: 15 - hOffset, m: 30 },
-    },
-    {
-      from: { h: 15 - hOffset, m: 40 },
-      to: { h: 17 - hOffset, m: 10 },
-    },
-  ]
-}
+const lessonsTimestamps: LessonsTimestamps = [
+  {
+    from: { h: 8 - hOffset, m: 30 },
+    to: { h: 10 - hOffset, m: 0 },
+  },
+  {
+    from: { h: 10 - hOffset, m: 10 },
+    to: { h: 11 - hOffset, m: 40 },
+  },
+  {
+    from: { h: 12 - hOffset, m: 20 },
+    to: { h: 13 - hOffset, m: 50 },
+  },
+  {
+    from: { h: 14 - hOffset, m: 0 },
+    to: { h: 15 - hOffset, m: 30 },
+  },
+  {
+    from: { h: 15 - hOffset, m: 40 },
+    to: { h: 17 - hOffset, m: 10 },
+  },
+]
 
 type NextLesson = {
   lesson: Lesson
   minutesRemaining: number
 }
 
-export function nextLessonIndex() {
+export function getNextLessonIndex() {
   const now = new Date()
-  const lessonsTimestamps = getLessonsTimestamps(timezone)
   const lessonsStartDates = lessonsTimestamps.map((ts) => {
     const start = startOfToday()
     start.setHours(ts.from.h)
@@ -71,38 +68,28 @@ export function nextLessonIndex() {
   return nextLessonIndex
 }
 
-// change to weekday to display if holiday
-export function nextLesson(lessons: Lesson[]): NextLesson | null {
-  const now = new Date()
-  // now.setHours(15 - 3)
-  // now.setMinutes(30)
-  const lessonsTimestamps = getLessonsTimestamps(timezone)
+export function getMinsToNextLesson(): number | null {
+  // const now = new Date()
+  const now = new Date('2024-11-26 08:29:00')
   const lessonsStartDates = lessonsTimestamps.map((ts) => {
     const start = startOfToday()
     start.setHours(ts.from.h)
     start.setMinutes(ts.from.m)
     return start
   })
-  let nextLessonStartDateIndex: number | null = null
+  let nextLessonIndex: number | null = null
   for (let i = 0; i < lessonsStartDates.length; i++) {
     const lessonStartDate = lessonsStartDates[i]
     if (isAfter(lessonStartDate, now)) {
-      nextLessonStartDateIndex = i
+      nextLessonIndex = i
       break
     }
   }
-  if (nextLessonStartDateIndex === null) {
+  if (nextLessonIndex === null) {
     return null
   }
-  const lesson = lessons[nextLessonStartDateIndex]
-  if (!lesson) {
-    return null
-  }
-  const minutesRemaining = differenceInMinutes(lessonsStartDates[nextLessonStartDateIndex], now)
-  return {
-    lesson,
-    minutesRemaining,
-  }
+  const minutesRemaining = differenceInMinutes(lessonsStartDates[nextLessonIndex], now)
+  return minutesRemaining
 }
 
 export async function querySchedule(id: number) {
@@ -140,6 +127,7 @@ export async function updateSchedule(id: number, updatedSchedule: ScheduleStore)
       id,
     },
     data: {
+      name: updatedSchedule.name,
       updatedAt: new Date(),
       days: {
         update: updatedSchedule.days.map((day) => ({

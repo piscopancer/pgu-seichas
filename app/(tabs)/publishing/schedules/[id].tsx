@@ -2,10 +2,11 @@ import ScheduleView from '@/components/schedule-view'
 import { queryKeys } from '@/query'
 import { querySchedule } from '@/schedule'
 import { defaultCommonScheduleStore, updateScheduleStore } from '@/store/schedule'
-import { assignObject } from '@/utils'
+import { assignObject, colors } from '@/utils'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect } from 'react'
+import { ActivityIndicator } from 'react-native'
 
 export default function UpdateScheduleScreen() {
   const { id: scheduleId } = useLocalSearchParams<{ id: string }>()
@@ -32,8 +33,8 @@ export default function UpdateScheduleScreen() {
     }
   }, [])
 
-  if (!scheduleQuery.data) {
-    return null
+  if (scheduleQuery.isFetching) {
+    return <ActivityIndicator size={'large'} color={colors.indigo[500]} className='mt-[33vh]' />
   }
 
   return <ScheduleView scheduleStore={updateScheduleStore} />

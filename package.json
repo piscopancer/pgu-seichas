@@ -5,7 +5,7 @@
   "description": "",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start --dev-client -c",
+    "start": "expo start --dev-client --clear",
     "android": "expo run:android",
     "migrate": "npx prisma@latest migrate dev",
     "generate": "npx prisma@latest generate",

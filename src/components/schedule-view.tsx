@@ -2,7 +2,7 @@ import { db } from '@/db'
 import useSubjectsQuery from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { LessonType, lessonTypes, lessonTypesInfo } from '@/lesson'
-import { lessonFromTo, maxLessons, nextLessonIndex, updateSchedule, weekdays } from '@/schedule'
+import { getNextLessonIndex, lessonFromTo, maxLessons, updateSchedule, weekdays } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, cn, colors, zonedDate } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
@@ -53,11 +53,13 @@ export default function ScheduleView(props: ScheduleViewProps) {
     >
       <ScrollView>
         {/* <Text className='dark:text-neutral-500 text-xs'>{JSON.stringify(, null, 2)}</Text> */}
-        <Text className='dark:text-zinc-500 mx-4 mb-2'>Название расписания</Text>
+        <Text className='dark:text-zinc-500 mx-4 mb-2 mt-12'>Название расписания</Text>
         <TextInput defaultValue={props.scheduleStore.name} onChange={(e) => (props.scheduleStore.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
-        {weekdays.map((weekday, i) => (
-          <Weekday day={props.scheduleStore.days[i]} key={i} weekday={weekday} dayI={i} />
-        ))}
+        <View className='mb-40'>
+          {weekdays.map((weekday, i) => (
+            <Weekday day={props.scheduleStore.days[i]} key={i} weekday={weekday} dayI={i} />
+          ))}
+        </View>
       </ScrollView>
       {props.scheduleStore.id === undefined ? <CreateSchedulePressable scheduleStore={props.scheduleStore} /> : <UpdateSchedulePressable id={props.scheduleStore.id} scheduleStore={props.scheduleStore} />}
       {/* subject sheet */}
@@ -188,7 +190,7 @@ function Weekday({ day, weekday, dayI }: WeekdayProps) {
           )}
           <View className={cn('gap-3', overlay && 'opacity-50 pointer-events-none')}>
             {Array.from({ length: maxLessons }).map((_, lessonI) => {
-              const next = today && nextLessonIndex() === lessonI
+              const next = today && getNextLessonIndex() === lessonI
               return (
                 <Fragment key={lessonI}>
                   <Lesson lesson={day.lessons[lessonI]} next={next} dayIndex={dayI} lessonIndex={lessonI} key={lessonI} />
