@@ -1,4 +1,4 @@
-import ScheduleView from '@/components/schedule-view/schedule-view'
+import { ScheduleViewEdit } from '@/components/schedule-view/schedule-view'
 import { createScheduleStore, defaultCommonSchedule } from '@/store/schedule'
 import { useEffect } from 'react'
 import { deepClone } from 'valtio/utils'
@@ -11,7 +11,7 @@ export default function CreateScheduleScreen() {
     }
   }, [])
 
-  return <ScheduleView scheduleStore={createScheduleStore} />
+  return <ScheduleViewEdit mode='edit' schedule={createScheduleStore} />
 }
 
 // const scheduleStore = proxy<ScheduleStore>({

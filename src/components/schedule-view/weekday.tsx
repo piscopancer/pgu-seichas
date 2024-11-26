@@ -1,4 +1,4 @@
-import { getNextLessonIndex, maxLessons } from '@/schedule'
+import { getNextLessonIndex, maxLessons, Schedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { cn, zonedDate } from '@/utils'
 import { LucideBed, LucideCake, LucideChevronDown, LucideChevronUp, LucideIcon, LucideUtensils } from 'lucide-react-native'
@@ -7,23 +7,69 @@ import { Pressable, View } from 'react-native'
 import { useSnapshot } from 'valtio'
 import Switch from '../switch'
 import Text from '../text'
-import Lesson from './lesson'
+import { LessonEdit, LessonView } from './lesson'
 
 function getOverlay(holiday: boolean, independentWorkDay: boolean): { icon: LucideIcon; text: string } | undefined {
   if (holiday) return { icon: LucideCake, text: 'Праздничный день' }
   if (independentWorkDay) return { icon: LucideBed, text: 'День самостоятельной работы' }
 }
 
-type WeekdayProps = {
-  day: ScheduleStore['days'][number]
+type WeekdayProps = (
+  | {
+      mode: 'edit'
+      onHolidayChanged: (current: boolean) => boolean
+      onIndependentWorkDayChanged: (current: boolean) => boolean
+      dayStore: ScheduleStore['days'][number]
+    }
+  | {
+      mode: 'view'
+    }
+) &
+  SharedWeekdayProps
+
+type SharedWeekdayProps = (
+  | {
+      mode: 'edit'
+      day: ScheduleStore['days'][number]
+    }
+  | {
+      mode: 'view'
+      day: Schedule['days'][number]
+    }
+) & {
   weekday: string
-  dayI: number
+  dayIndex: number
 }
 
-export default function Weekday({ day, weekday, dayI }: WeekdayProps) {
+export function WeekdayEdit({ day, dayIndex, weekday }: SharedWeekdayProps & { mode: 'edit' }) {
   const daySnap = useSnapshot(day)
-  const today = zonedDate().getDay() - 1 === dayI
-  const overlay = getOverlay(!!day.holiday, !!day.independentWorkDay)
+
+  return (
+    <Weekday
+      mode='edit'
+      day={daySnap as typeof day}
+      dayStore={day}
+      dayIndex={dayIndex}
+      weekday={weekday}
+      onHolidayChanged={(current) => {
+        day.holiday = !current
+        return current
+      }}
+      onIndependentWorkDayChanged={(current) => {
+        day.independentWorkDay = !current
+        return current
+      }}
+    />
+  )
+}
+
+export function WeekdayView({ day, dayIndex, weekday }: SharedWeekdayProps & { mode: 'view' }) {
+  return <Weekday mode='view' day={day} dayIndex={dayIndex} weekday={weekday} />
+}
+
+function Weekday(props: WeekdayProps) {
+  const today = zonedDate().getDay() - 1 === props.dayIndex
+  const overlay = getOverlay(!!props.day.holiday, !!props.day.independentWorkDay)
   const [collapsed, setCollapsed] = useState(false)
   const CollapsedIcon = collapsed ? LucideChevronDown : LucideChevronUp
 
@@ -31,29 +77,21 @@ export default function Weekday({ day, weekday, dayI }: WeekdayProps) {
     <View>
       <Pressable onPress={() => setCollapsed((prev) => !prev)}>
         <CollapsedIcon className='absolute top-1/2 -translate-y-1/2 left-8 size-6 color-neutral-500' />
-        <Text className='px-4 text-2xl text-center my-8 uppercase'>{weekday}</Text>
+        <Text className='px-4 text-2xl text-center my-8 uppercase'>{props.weekday}</Text>
       </Pressable>
       <View className={cn(collapsed ? 'hidden' : '')}>
-        <View className='flex-row items-center px-4 mb-4'>
-          <Text className='mr-auto text-lg'>Праздничный день</Text>
-          <Switch
-            action={(current) => {
-              day.holiday = !current
-              return !current
-            }}
-            enabled={daySnap.holiday === true}
-          />
-        </View>
-        <View className='flex-row items-center px-4 mb-6'>
-          <Text className='mr-auto text-lg'>День самостоятельной работы</Text>
-          <Switch
-            action={(current) => {
-              day.independentWorkDay = !current
-              return !current
-            }}
-            enabled={daySnap.independentWorkDay === true}
-          />
-        </View>
+        {props.mode === 'edit' && (
+          <>
+            <View className='flex-row items-center px-4 mb-4'>
+              <Text className='mr-auto text-lg'>Праздничный день</Text>
+              <Switch action={props.onHolidayChanged} enabled={props.day.holiday === true} />
+            </View>
+            <View className='flex-row items-center px-4 mb-6'>
+              <Text className='mr-auto text-lg'>День самостоятельной работы</Text>
+              <Switch action={props.onIndependentWorkDayChanged} enabled={props.day.independentWorkDay === true} />
+            </View>
+          </>
+        )}
         <View className='relative'>
           {overlay && (
             <View className='top-0 right-0 bottom-0 left-0 absolute justify-center items-center z-[1]'>
@@ -66,7 +104,8 @@ export default function Weekday({ day, weekday, dayI }: WeekdayProps) {
               const next = today && getNextLessonIndex() === lessonI
               return (
                 <Fragment key={lessonI}>
-                  <Lesson lesson={day.lessons[lessonI]} next={next} dayIndex={dayI} lessonIndex={lessonI} key={lessonI} />
+                  {props.mode === 'edit' && <LessonEdit mode='edit' lesson={props.dayStore.lessons[lessonI]} next={next} dayIndex={props.dayIndex} lessonIndex={lessonI} />}
+                  {props.mode === 'view' && <LessonView mode='view' lesson={props.day.lessons[lessonI]} next={next} dayIndex={props.dayIndex} lessonIndex={lessonI} />}
                   {lessonI === 1 && <LucideUtensils strokeWidth={1} className='color-neutral-500 self-center' />}
                 </Fragment>
               )

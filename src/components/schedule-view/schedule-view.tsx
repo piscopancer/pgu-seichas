@@ -3,7 +3,7 @@ import useSubjectsQuery from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { lessonTypes, lessonTypesInfo } from '@/lesson'
 import { qc, queryKeys } from '@/query'
-import { updateSchedule, weekdays } from '@/schedule'
+import { Schedule, updateSchedule, weekdays } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, colors } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
@@ -17,13 +17,19 @@ import { BottomSheet, useBottomSheetRef } from '../bottom-sheet'
 import Text from '../text'
 import TextInput from '../text-input'
 import { scheduleContext, SheetOpenFor } from './shared'
-import Weekday from './weekday'
+import { WeekdayEdit, WeekdayView } from './weekday'
 
-type ScheduleViewProps = {
-  scheduleStore: ScheduleStore
-}
+type ScheduleViewProps =
+  | {
+      mode: 'edit'
+      schedule: ScheduleStore
+    }
+  | {
+      mode: 'view'
+      schedule: Schedule
+    }
 
-export default function ScheduleView(props: ScheduleViewProps) {
+export function ScheduleViewEdit({ schedule }: ScheduleViewProps & { mode: 'edit' }) {
   const subjectSheet = useBottomSheetRef()
   const lessonTypeSheet = useBottomSheetRef()
   const sheetOpenFor = useRef<SheetOpenFor>()
@@ -36,26 +42,17 @@ export default function ScheduleView(props: ScheduleViewProps) {
         sheetOpenFor,
         lessonTypeSheet,
         subjectSheet,
+        mode: 'edit',
       }}
     >
-      <ScrollView>
-        {/* <Text className='dark:text-neutral-500 text-xs'>{JSON.stringify(, null, 2)}</Text> */}
-        <Text className='dark:text-zinc-500 mx-4 mb-2 mt-12'>Название расписания</Text>
-        <TextInput defaultValue={props.scheduleStore.name} onChange={(e) => (props.scheduleStore.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
-        <View className='mb-40'>
-          {weekdays.map((weekday, i) => (
-            <Weekday day={props.scheduleStore.days[i]} key={i} weekday={weekday} dayI={i} />
-          ))}
-        </View>
-      </ScrollView>
-      {props.scheduleStore.id === undefined ? <CreateSchedulePressable scheduleStore={props.scheduleStore} /> : <UpdateSchedulePressable id={props.scheduleStore.id} scheduleStore={props.scheduleStore} />}
+      <ScheduleView mode='edit' schedule={schedule} />
       {/* subject sheet */}
       <BottomSheet ref={subjectSheet} onClose={() => (sheetOpenFor.current = undefined)}>
         <Pressable
           android_ripple={{ color: colors.neutral[700] }}
           onPress={() => {
             if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-              props.scheduleStore.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = null
+              schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = null
               subjectSheet.current?.close()
               sheetOpenFor.current = undefined
             }
@@ -76,7 +73,7 @@ export default function ScheduleView(props: ScheduleViewProps) {
                 android_ripple={{ color: colors.neutral[700] }}
                 onPress={() => {
                   if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-                    props.scheduleStore.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = subject.item.id
+                    schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = subject.item.id
                     sheetOpenFor.current = undefined
                     subjectSheet.current?.close()
                   }
@@ -94,7 +91,7 @@ export default function ScheduleView(props: ScheduleViewProps) {
         <Pressable
           onPress={() => {
             if (sheetOpenFor.current) {
-              props.scheduleStore.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = null
+              schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = null
               sheetOpenFor.current = undefined
               lessonTypeSheet.current?.close()
             }
@@ -111,7 +108,7 @@ export default function ScheduleView(props: ScheduleViewProps) {
               <Pressable
                 onPress={() => {
                   if (sheetOpenFor.current) {
-                    props.scheduleStore.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = lessonType
+                    schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = lessonType
                     sheetOpenFor.current = undefined
                     lessonTypeSheet.current?.close()
                   }
@@ -126,6 +123,38 @@ export default function ScheduleView(props: ScheduleViewProps) {
         />
       </BottomSheet>
     </scheduleContext.Provider>
+  )
+}
+
+export function ScheduleViewView({ schedule }: ScheduleViewProps & { mode: 'view' }) {
+  return (
+    <scheduleContext.Provider
+      value={{
+        sheetOpenFor: null,
+        lessonTypeSheet: null,
+        subjectSheet: null,
+        mode: 'view',
+      }}
+    >
+      <ScheduleView mode='view' schedule={schedule} />
+    </scheduleContext.Provider>
+  )
+}
+
+function ScheduleView(props: ScheduleViewProps) {
+  return (
+    <>
+      <ScrollView>
+        <Text className='dark:text-zinc-500 mx-4 mb-2 mt-12'>Название расписания</Text>
+        <TextInput editable={props.mode === 'edit'} defaultValue={props.schedule.name} onChange={(e) => (props.schedule.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
+        <View className='mb-40'>
+          {props.mode === 'edit' && weekdays.map((weekday, i) => <WeekdayEdit mode={props.mode} day={props.schedule.days[i]} key={i} weekday={weekday} dayIndex={i} />)}
+          {/*  */}
+          {props.mode === 'view' && weekdays.map((weekday, i) => <WeekdayView mode={props.mode} day={props.schedule.days[i]} key={i} weekday={weekday} dayIndex={i} />)}
+        </View>
+      </ScrollView>
+      {props.mode === 'edit' && (props.schedule.id === undefined ? <CreateSchedulePressable scheduleStore={props.schedule} /> : <UpdateSchedulePressable id={props.schedule.id} scheduleStore={props.schedule} />)}
+    </>
   )
 }
 

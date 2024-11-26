@@ -1,4 +1,4 @@
-import ScheduleView from '@/components/schedule-view/schedule-view'
+import { ScheduleViewEdit } from '@/components/schedule-view/schedule-view'
 import { queryKeys } from '@/query'
 import { querySchedule } from '@/schedule'
 import { defaultCommonScheduleStore, updateScheduleStore } from '@/store/schedule'
@@ -37,5 +37,5 @@ export default function UpdateScheduleScreen() {
     return <ActivityIndicator size={'large'} color={colors.indigo[500]} className='mt-[33vh]' />
   }
 
-  return <ScheduleView scheduleStore={updateScheduleStore} />
+  return <ScheduleViewEdit mode='edit' schedule={updateScheduleStore} />
 }

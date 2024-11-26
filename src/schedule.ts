@@ -192,7 +192,7 @@ export async function querySchedules(filters?: { search?: string }) {
   })
 }
 
-// export type ScheduleForCard = NonNullable<Awaited<ReturnType<typeof querySchedules>>>[number]
+export type ScheduleForCard = NonNullable<Awaited<ReturnType<typeof querySchedules>>>[number]
 
 export async function querySchedule(id: number) {
   return db.schedule.findFirst({
@@ -221,7 +221,7 @@ export async function querySchedule(id: number) {
   })
 }
 
-export type UpdateScheduleStore = NonNullable<Awaited<ReturnType<typeof querySchedule>>>
+export type Schedule = NonNullable<Awaited<ReturnType<typeof querySchedule>>>
 
 export async function updateSchedule(id: number, updatedSchedule: ScheduleStore) {
   return db.schedule.update({

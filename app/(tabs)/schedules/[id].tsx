@@ -1,4 +1,4 @@
-import Text from '@/components/text'
+import { ScheduleViewView } from '@/components/schedule-view/schedule-view'
 import { queryKeys } from '@/query'
 import { querySchedule } from '@/schedule'
 import { colors } from '@/utils'
@@ -17,6 +17,5 @@ export default function ViewScheduleScreen() {
     return <ActivityIndicator size={'large'} color={colors.indigo[500]} className='mt-[33vh]' />
   }
 
-  // return <ScheduleView scheduleStore={updateScheduleStore} />
-  return <Text>{scheduleQuery.data?.name}</Text>
+  return <ScheduleViewView mode='view' schedule={scheduleQuery.data} />
 }
