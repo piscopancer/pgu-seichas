@@ -5,14 +5,15 @@
   "description": "",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start --dev-client --clear",
+    "start": "set \"DEBUG=nativewind\" && expo start --dev-client --clear",
     "android": "expo run:android",
     "migrate": "npx prisma@latest migrate dev",
     "generate": "npx prisma@latest generate",
     "studio": "npx prisma@latest studio --port 7777",
     "prebuild": "expo prebuild -p android --clean",
     "eas": "eas build -p android --profile preview",
-    "eas-dev": "eas build -p android --profile dev-client",
+    "eas-dev": "eas build -p android --profile dev",
+    "eas-preview": "eas build -p android --profile preview",
     "ios": "expo run:ios"
   },
   "dependencies": {

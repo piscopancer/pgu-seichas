@@ -4,7 +4,7 @@ import { LessonType, lessonTypesInfo } from '@/lesson'
 import { lessonFromTo, Schedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
-import { LucideIcon, LucideRotateCcw } from 'lucide-react-native'
+import { LucideDot, LucideIcon, LucideRotateCcw } from 'lucide-react-native'
 import { useContext } from 'react'
 import { Pressable, View } from 'react-native'
 import { useSnapshot } from 'valtio'
@@ -15,7 +15,7 @@ import { scheduleContext } from './shared'
 type LessonProps = (
   | {
       mode: 'edit'
-      onPlaceChange: (place: string) => void
+      onPlaceChange: (place: string | null) => void
       onSubjectSheetOpen: () => void
       onTypeSheetOpen: () => void
       onRestorePress: () => void
@@ -113,43 +113,61 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
 
   return (
     <View className='flex-row relative border-y border-neutral-800'>
-      <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-2' : 'left-4')}>{lessonFromTo(props.lessonIndex)}</Text>
-      <Pressable
-        android_ripple={{ color: colors.neutral[700] }}
-        disabled={props.mode !== 'edit'}
-        onPress={() => {
-          if (props.mode === 'edit') {
-            props.onSubjectSheetOpen()
-          }
-        }}
-        className='flex-1 px-4 justify-center border-r border-neutral-800'
-      >
-        {props.subject ? (
-          <View>
-            <Text className='line-clamp-1 mb-0.5'>{props.subject.name}</Text>
-            <Text className=' dark:text-neutral-500'>{tutor ? `${tutor.surname} ${tutor.name[0]}. ${tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
+      <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-4' : 'left-6')}>{lessonFromTo(props.lessonIndex)}</Text>
+      {props.mode === 'view' && !props.subject ? (
+        <LucideDot className='color-neutral-800 my-8 mx-auto' />
+      ) : (
+        <>
+          <Pressable
+            android_ripple={{ color: colors.neutral[700] }}
+            disabled={props.mode !== 'edit'}
+            onPress={() => {
+              if (props.mode === 'edit') {
+                props.onSubjectSheetOpen()
+              }
+            }}
+            className='flex-1 px-6 justify-center border-r border-neutral-800'
+          >
+            {props.subject ? (
+              <View>
+                <Text className='line-clamp-1 mb-0.5 text-xl'>{props.subject.name}</Text>
+                <Text className=' dark:text-neutral-500'>{tutor ? `${tutor.surname} ${tutor.name[0]}. ${tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
+              </View>
+            ) : (
+              <Text className='dark:text-neutral-500 text-lg'>Предмет</Text>
+            )}
+          </Pressable>
+          <View className={cn('w-36', props.mode === 'edit' && 'border-r border-neutral-800')}>
+            <TextInput
+              editable={props.mode === 'edit'}
+              defaultValue={props.lesson.place ?? ''}
+              placeholder={props.mode === 'view' ? '?' : 'Место'}
+              onChange={({ nativeEvent: { text } }) => {
+                if (props.mode === 'edit') {
+                  props.onPlaceChange(text.trim() || null)
+                }
+              }}
+              className='text-center rounded-none border-0 py-2'
+            />
+            <Pressable
+              disabled={props.mode !== 'edit'}
+              android_ripple={{ color: colors.neutral[700] }}
+              onPress={() => {
+                if (props.mode === 'edit') {
+                  props.onTypeSheetOpen()
+                }
+              }}
+              className='border-t border-neutral-800'
+            >
+              <View className='relative'>
+                {props.TypeIcon && <props.TypeIcon strokeWidth={1.5} className='color-indigo-500 absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 size-5' />}
+                <Text className={cn('text-center text-lg py-2 px-5 line-clamp-1', props.lesson.type ? '' : 'dark:text-neutral-500')}>{props.lesson.type ? capitalizeFirstLetter(lessonTypesInfo[props.lesson.type as LessonType].long) : props.mode === 'view' ? '?' : 'Тип'}</Text>
+              </View>
+            </Pressable>
           </View>
-        ) : (
-          <Text className='dark:text-neutral-500 text-lg'>Предмет</Text>
-        )}
-      </Pressable>
-      <View className='w-36 border-r border-neutral-800'>
-        <TextInput editable={props.mode === 'edit'} defaultValue={props.lesson.place ?? ''} placeholder='Место' onChange={(e) => (props.lesson.place = e.nativeEvent.text.trim())} className='text-center rounded-none border-0 py-2' />
-        <Pressable
-          android_ripple={{ color: colors.neutral[700] }}
-          onPress={() => {
-            if (props.mode === 'edit') {
-              props.onTypeSheetOpen()
-            }
-          }}
-          className='border-t border-neutral-800'
-        >
-          <View className='relative'>
-            {props.TypeIcon && <props.TypeIcon strokeWidth={1.5} className='color-indigo-500 absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 size-5' />}
-            <Text className={cn('text-center text-lg py-2 px-5 line-clamp-1', props.lesson.type ? '' : 'dark:text-neutral-500')}>{props.lesson.type ? capitalizeFirstLetter(lessonTypesInfo[props.lesson.type as LessonType].long) : 'Тип'}</Text>
-          </View>
-        </Pressable>
-      </View>
+        </>
+      )}
+
       {props.mode === 'edit' && (
         <View>
           <Pressable

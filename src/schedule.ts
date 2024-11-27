@@ -237,16 +237,16 @@ export async function updateSchedule(id: number, updatedSchedule: ScheduleStore)
             id: day.id,
           },
           data: {
-            holiday: day.holiday ?? undefined,
-            independentWorkDay: day.independentWorkDay ?? undefined,
+            holiday: day.holiday,
+            independentWorkDay: day.independentWorkDay,
             lessons: {
               update: day.lessons.map(
                 (lesson) =>
                   ({
                     data: {
                       subjectId: lesson.subjectId !== undefined ? lesson.subjectId : undefined,
-                      place: lesson.place ?? undefined,
-                      type: lesson.type ?? undefined,
+                      place: lesson.place,
+                      type: lesson.type,
                     },
                     where: {
                       id: lesson.id,

@@ -1,6 +1,6 @@
 import { cn, colors } from '@/utils'
 import { Href, Link, Stack, useSegments } from 'expo-router'
-import { LucideCalendarDays, LucideEdit, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
+import { LucideCalendarSearch, LucideEdit, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
 import { Pressable, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -36,7 +36,7 @@ export default function TabLayout() {
       </View>
       <View className='h-16 border-t border-neutral-900 flex flex-row'>
         <TabLink segment='' href={'/(tabs)'} icon={LucideHome} />
-        <TabLink segment='schedules' href={'/(tabs)/schedules'} icon={LucideCalendarDays} />
+        <TabLink segment='schedules' href={'/(tabs)/schedules'} icon={LucideCalendarSearch} />
         {publisherRights && <TabLink segment='publishing' href='/(tabs)/publishing' icon={LucideEdit} />}
       </View>
     </SafeAreaView>

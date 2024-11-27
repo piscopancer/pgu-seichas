@@ -35,7 +35,7 @@ export default function SubjectsScreen() {
   return (
     <ScrollView overScrollMode='never'>
       <Link asChild href={'/(tabs)/publishing/subjects/create'}>
-        <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center'>
+        <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center mt-4'>
           <LucideBookPlus strokeWidth={1} className='color-neutral-600 size-8 mr-5' />
           <Text className='text-lg'>Добавить предмет</Text>
         </Pressable>
@@ -48,12 +48,13 @@ export default function SubjectsScreen() {
       <FlatList
         scrollEnabled={false}
         data={subjectsQuery.data ?? []}
+        ItemSeparatorComponent={() => <View className='border-b border-neutral-800 mx-4' />}
         renderItem={({ item: subject }) => (
           <Link asChild href={`/(tabs)/publishing/subjects/${subject.id}`}>
-            <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[700] }}>
+            <Pressable className='bg-neutral-950 px-6 pt-4 pb-5 flex-row items-center' android_ripple={{ color: neutral[700] }}>
               <View className='flex-1 mr-4'>
-                <Text className='mb-1 line-clamp-1 mr-auto text-lg'>{subject.name}</Text>
-                <Text className='dark:text-neutral-500'>{subject.tutor ? `${subject.tutor.surname} ${subject.tutor.name[0]}. ${subject.tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
+                <Text className='line-clamp-1 mr-auto text-lg'>{subject.name}</Text>
+                <Text className='dark:text-neutral-500 text-lg'>{subject.tutor ? `${subject.tutor.surname} ${subject.tutor.name[0]}. ${subject.tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
               </View>
               <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />
             </Pressable>

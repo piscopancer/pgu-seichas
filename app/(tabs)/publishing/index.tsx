@@ -21,7 +21,7 @@ export default function PublishingScreen() {
   })
 
   return (
-    <ScrollView overScrollMode='never'>
+    <ScrollView overScrollMode='never' className='mt-4'>
       <CategoryLink href='/(tabs)/publishing/tutors' icon={LucideUsersRound} text='Преподаватели' count={tutorsCountQuery.data ?? 0} />
       <CategoryLink href='/(tabs)/publishing/subjects' icon={LucideBookCopy} text='Предметы' count={subjectsCountQuery.data ?? 0} />
       <CategoryLink href='/(tabs)/publishing/schedules' icon={LucideCalendarDays} text='Расписания' count={schedulesCountQuery.data ?? 0} />

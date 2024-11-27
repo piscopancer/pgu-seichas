@@ -4,14 +4,14 @@ import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
 import { qc, queryKeys } from '@/query'
-import { Rank, ranks, ranksInfo } from '@/tutor'
+import { Rank, ranks, ranksInfo, tutorSchema } from '@/tutor'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect } from 'react'
-import { FlatList, Pressable, ScrollView } from 'react-native'
+import { FlatList, Pressable, ScrollView, ToastAndroid } from 'react-native'
 import { indigo, neutral } from 'tailwindcss/colors'
 import { proxy, useSnapshot } from 'valtio'
 
@@ -112,17 +112,6 @@ export default function TutorScreen() {
           </Pressable>
           <BottomSheet ref={rankSheetRef}>
             <BottomSheetView>
-              {/* <Pressable
-                android_ripple={{ color: colors.neutral[700] }}
-                onPress={() => {
-                  changedStore.rank = undefined
-                  rankSheetRef.current?.close()
-                }}
-                className='px-6 py-4 flex-row items-center border-b border-neutral-800'
-              >
-                <LucideRotateCcw strokeWidth={1} className='mr-5 color-neutral-500' />
-                <Text className='text-lg'>Отменить изменения</Text>
-              </Pressable> */}
               <Pressable
                 android_ripple={{ color: colors.neutral[700] }}
                 onPress={() => {
@@ -131,8 +120,7 @@ export default function TutorScreen() {
                 }}
                 className='px-6 py-4 flex-row items-center border-b border-neutral-800'
               >
-                {/* <LucideUserRoundX strokeWidth={1} className='mr-5 color-neutral-500' /> */}
-                <Text className='text-lg'>Не указана</Text>
+                <Text className='dark:text-neutral-500 text-lg'>Не указана</Text>
               </Pressable>
               <FlatList
                 data={ranks}
@@ -145,14 +133,12 @@ export default function TutorScreen() {
                     }}
                     className='px-6 py-4 flex-row items-center'
                   >
-                    {/* <LucideUserRound strokeWidth={1} className='mr-5 color-neutral-500' /> */}
                     <Text className='text-lg line-clamp-1'>{capitalizeFirstLetter(ranksInfo[rank].long)}</Text>
                   </Pressable>
                 )}
               />
             </BottomSheetView>
           </BottomSheet>
-
           <Pressable
             onPress={() => {
               if (tutorQuery.data) {
@@ -171,24 +157,29 @@ export default function TutorScreen() {
             disabled={updateTutorMutation.isPending}
             onPress={() => {
               if (!tutorQuery.data) return
-              updateTutorMutation.mutate({
-                where: {
-                  id: Number(tutorId),
-                },
-                data: {
-                  ...(changedStore.name ? { name: changedStore.name } : {}),
-                  ...(changedStore.surname ? { surname: changedStore.surname } : {}),
-                  ...(changedStore.middlename ? { middlename: changedStore.middlename } : {}),
-                  ...(changedStore.rank !== undefined ? { rank: changedStore.rank } : {}),
-                },
-              })
+              const tutorParseRes = tutorSchema.safeParse({
+                name: changedStore.name ?? tutorQuery.data.name,
+                surname: changedStore.surname ?? tutorQuery.data.surname,
+                middlename: changedStore.middlename ?? tutorQuery.data.middlename,
+                rank: changedStore.rank !== undefined ? changedStore.rank : (tutorQuery.data.rank as Rank | null),
+              } satisfies typeof changedStore)
+              if (tutorParseRes.success) {
+                updateTutorMutation.mutate({
+                  where: {
+                    id: Number(tutorId),
+                  },
+                  data: tutorParseRes.data,
+                })
+              } else {
+                const errorMsg = tutorParseRes.error.issues.map((i) => i.message).join('\n')
+                ToastAndroid.show(errorMsg, ToastAndroid.SHORT)
+              }
             }}
             className='mb-12 mx-4 py-4 px-6 bg-indigo-500 rounded-md'
             android_ripple={{ color: indigo[300] }}
           >
             <Text className='text-center text-lg font-sans-bold'>Сохранить</Text>
           </Pressable>
-          {/* <Text className='dark:text-neutral-500 text-xs'>{JSON.stringify({ name: changedName, surname: changedSurname, middlename: changedMiddlename, rank: changedRank }, null, 2)}</Text> */}
         </>
       ) : null}
     </ScrollView>

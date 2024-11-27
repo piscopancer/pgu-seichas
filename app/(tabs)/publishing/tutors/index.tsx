@@ -13,7 +13,7 @@ export default function TutorsScreen() {
   return (
     <ScrollView overScrollMode='never'>
       <Link asChild href={'/(tabs)/publishing/tutors/create'}>
-        <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center'>
+        <Pressable android_ripple={{ color: neutral[700] }} className='bg-neutral-950 py-4 px-6 flex-row items-center mt-4'>
           <LucideUserRoundPlus strokeWidth={1} className='color-neutral-600 size-8 mr-5' />
           <Text className='text-lg'>Добавить преподавателя</Text>
         </Pressable>
@@ -26,9 +26,10 @@ export default function TutorsScreen() {
       <FlatList
         scrollEnabled={false}
         data={allTutorsQuery.data ?? []}
+        ItemSeparatorComponent={() => <View className='border-b border-neutral-800 mx-4' />}
         renderItem={({ item: tutor }) => (
           <Link asChild href={`/(tabs)/publishing/tutors/${tutor.id}`}>
-            <Pressable className='bg-neutral-950 px-6 py-4 flex-row items-center' android_ripple={{ color: neutral[700] }}>
+            <Pressable className='bg-neutral-950 px-6 pt-4 pb-5 flex-row items-center' android_ripple={{ color: neutral[700] }}>
               <View className='mr-auto'>
                 <Text className='text-lg mb-2'>
                   {tutor.surname}{' '}

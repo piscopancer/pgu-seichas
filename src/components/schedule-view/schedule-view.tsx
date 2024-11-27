@@ -145,8 +145,14 @@ function ScheduleView(props: ScheduleViewProps) {
   return (
     <>
       <ScrollView>
-        <Text className='dark:text-zinc-500 mx-4 mb-2 mt-12'>Название расписания</Text>
-        <TextInput editable={props.mode === 'edit'} defaultValue={props.schedule.name} onChange={(e) => (props.schedule.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
+        {props.mode === 'edit' ? (
+          <>
+            <Text className='dark:text-zinc-500 mx-4 mb-2 mt-12'>Название расписания</Text>
+            <TextInput editable={props.mode === 'edit'} defaultValue={props.schedule.name} onChange={(e) => (props.schedule.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
+          </>
+        ) : (
+          <Text className='text-2xl text-center mt-12 mb-4 font-sans-bold'>{props.schedule.name}</Text>
+        )}
         <View className='mb-40'>
           {props.mode === 'edit' && weekdays.map((weekday, i) => <WeekdayEdit mode={props.mode} day={props.schedule.days[i]} key={i} weekday={weekday} dayIndex={i} />)}
           {/*  */}
@@ -176,7 +182,7 @@ async function createSchedule(schedule: ScheduleStore) {
                     ? {
                         subject: {
                           connect: {
-                            id: lesson.subjectId ?? undefined,
+                            id: lesson.subjectId,
                           },
                         },
                       }

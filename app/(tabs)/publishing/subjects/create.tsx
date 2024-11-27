@@ -4,7 +4,7 @@ import TextInput from '@/components/text-input'
 import { db } from '@/db'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { qc, queryKeys } from '@/query'
-import { colors } from '@/utils'
+import { cn, colors } from '@/utils'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
@@ -28,7 +28,7 @@ export default function SubjectScreen() {
   const tutorSheetRef = useBottomSheetRef()
   const canCreate = !!subjectName || tutorId !== undefined
 
-  function getTutor(): string {
+  function getTutor(): string | null {
     if (!tutorsQuery.data) {
       return '...'
     }
@@ -36,32 +36,30 @@ export default function SubjectScreen() {
       const { name, surname, middlename } = tutorsQuery.data.filter((t) => t.id === tutorId)[0]
       return `${surname} ${name} ${middlename}`
     } else {
-      return 'Не указан'
+      return null
     }
   }
 
   return (
     <ScrollView overScrollMode='never'>
       <>
-        {/* subject */}
-        <Text className='mx-6 dark:text-neutral-500 mb-2 text-lg'>Предмет</Text>
+        <Text className='mx-6 dark:text-neutral-500 mb-2 text-lg mt-8'>Предмет</Text>
         <TextInput
           onChange={({ nativeEvent: { text } }) => {
             setSubjectName(text)
           }}
           className='mx-6 mb-4'
         />
-        {/* tutor */}
         <Text className='mx-6 dark:text-neutral-500 mb-2 text-lg'>Преподаватель</Text>
         <Pressable
           android_ripple={{ color: colors.neutral[700] }}
           onPress={() => {
             tutorSheetRef.current?.expand()
           }}
-          className='bg-neutral-900 px-6 py-4 flex-row mb-12'
+          className='mx-6 border border-neutral-800 rounded-md p-4 flex-row mb-12'
         >
           <LucideUserRound strokeWidth={1} className='color-neutral-500 mr-5' />
-          <Text className='text-lg line-clamp-1'>{getTutor()}</Text>
+          <Text className={cn('text-lg line-clamp-1', getTutor() ? '' : 'dark:text-neutral-500')}>{getTutor() ?? 'Не указан'}</Text>
         </Pressable>
         <BottomSheet ref={tutorSheetRef}>
           <BottomSheetView>
