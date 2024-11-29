@@ -1,7 +1,7 @@
 import useSubjectsQuery, { querySubjects } from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { LessonType, lessonTypesInfo } from '@/lesson'
-import { lessonFromTo, Schedule } from '@/schedule'
+import { Schedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
 import { LucideDot, LucideIcon, LucideRotateCcw } from 'lucide-react-native'
@@ -113,7 +113,11 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
 
   return (
     <View className='flex-row relative border-y border-neutral-800'>
-      <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-4' : 'left-6')}>{lessonFromTo(props.lessonIndex)}</Text>
+      <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-4' : 'left-6')}>
+        {/* {lessonFromTo(props.lessonIndex)} */}
+        {props.lessonIndex + 1}
+      </Text>
+      {/* <Text className='absolute left-0 top-1/2 -translate-y-1/2 px-1 bg-neutral-900 rounded-r-md'>{props.lessonIndex + 1}</Text> */}
       {props.mode === 'view' && !props.subject ? (
         <LucideDot className='color-neutral-800 my-8 mx-auto' />
       ) : (
@@ -138,17 +142,20 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
             )}
           </Pressable>
           <View className={cn('w-36', props.mode === 'edit' && 'border-r border-neutral-800')}>
-            <TextInput
-              editable={props.mode === 'edit'}
-              defaultValue={props.lesson.place ?? ''}
-              placeholder={props.mode === 'view' ? '?' : 'Место'}
-              onChange={({ nativeEvent: { text } }) => {
-                if (props.mode === 'edit') {
-                  props.onPlaceChange(text.trim() || null)
-                }
-              }}
-              className='text-center rounded-none border-0 py-2'
-            />
+            {props.mode === 'edit' ? (
+              <TextInput
+                defaultValue={props.lesson.place ?? ''}
+                placeholder='Место'
+                onChange={({ nativeEvent: { text } }) => {
+                  if (props.mode === 'edit') {
+                    props.onPlaceChange(text.trim() || null)
+                  }
+                }}
+                className='text-center rounded-none border-0 py-2'
+              />
+            ) : (
+              <Text className={cn('text-center text-lg py-2 px-3 line-clamp-1', props.lesson.place ? '' : 'dark:text-neutral-500')}>{props.lesson.place ?? '?'}</Text>
+            )}
             <Pressable
               disabled={props.mode !== 'edit'}
               android_ripple={{ color: colors.neutral[700] }}

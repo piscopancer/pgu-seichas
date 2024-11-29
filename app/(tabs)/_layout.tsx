@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function TabLayout() {
   const publisherRights = true
-  const [, tab] = useSegments()
 
   return (
     <SafeAreaView className='flex-1 bg-neutral-200 dark:bg-black'>

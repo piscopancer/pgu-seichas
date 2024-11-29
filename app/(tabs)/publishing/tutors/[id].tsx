@@ -120,7 +120,7 @@ export default function TutorScreen() {
                 }}
                 className='px-6 py-4 flex-row items-center border-b border-neutral-800'
               >
-                <Text className='dark:text-neutral-500 text-lg'>Не указана</Text>
+                <Text className='text-lg'>Не указана</Text>
               </Pressable>
               <FlatList
                 data={ranks}
