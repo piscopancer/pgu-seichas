@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router'
 import { LucideCalendarCheck2, LucideCalendarPlus } from 'lucide-react-native'
 import { useRef } from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
-import { BottomSheet, useBottomSheetRef } from '../bottom-sheet'
+import { BottomSheet, useSheetRef } from '../bottom-sheet'
 import Text from '../text'
 import TextInput from '../text-input'
 import { scheduleContext, SheetOpenFor } from './shared'
@@ -30,8 +30,8 @@ type ScheduleViewProps =
     }
 
 export function ScheduleViewEdit({ schedule }: ScheduleViewProps & { mode: 'edit' }) {
-  const subjectSheet = useBottomSheetRef()
-  const lessonTypeSheet = useBottomSheetRef()
+  const subjectSheet = useSheetRef()
+  const lessonTypeSheet = useSheetRef()
   const sheetOpenFor = useRef<SheetOpenFor>()
   const subjectsQuery = useSubjectsQuery()
   const tutorsQuery = useTutorsQuery()

@@ -1,3 +1,4 @@
+import usePublisherStatus from '@/hooks/query/use-publisher-status'
 import { cn, colors } from '@/utils'
 import { Href, Link, Stack, useSegments } from 'expo-router'
 import { LucideCalendarSearch, LucideEdit, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
@@ -5,10 +6,10 @@ import { Pressable, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function TabLayout() {
-  const publisherRights = true
+  const { data: publisher } = usePublisherStatus()
 
   return (
-    <SafeAreaView className='flex-1 bg-neutral-200 dark:bg-black'>
+    <SafeAreaView className='flex-1 bg-neutral-200 dark:bg-neutral-950'>
       <View className='h-16 border-b border-neutral-900 flex flex-row justify-end'>
         <Link href={'/settings'} asChild>
           <Pressable
@@ -36,7 +37,7 @@ export default function TabLayout() {
       <View className='h-16 border-t border-neutral-900 flex flex-row'>
         <TabLink segment='' href={'/(tabs)'} icon={LucideHome} />
         <TabLink segment='schedules' href={'/(tabs)/schedules'} icon={LucideCalendarSearch} />
-        {publisherRights && <TabLink segment='publishing' href='/(tabs)/publishing' icon={LucideEdit} />}
+        {publisher && <TabLink segment='publishing' href='/(tabs)/publishing' icon={LucideEdit} />}
       </View>
     </SafeAreaView>
   )

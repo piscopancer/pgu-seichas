@@ -1,16 +1,15 @@
 import { colors } from '@/utils'
 import RNBottomSheet, { BottomSheetBackdrop, BottomSheetProps } from '@gorhom/bottom-sheet'
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { Portal } from '@gorhom/portal'
 import { ForwardedRef, forwardRef, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export function useBottomSheetRef() {
-  return useRef<RNBottomSheet>(null)
+export function useSheetRef(initital?: BottomSheetMethods | null) {
+  return useRef<RNBottomSheet>(initital ?? null)
 }
 
-export type BottomSheetForwardedRef = ForwardedRef<RNBottomSheet>
-
-export const BottomSheet = forwardRef(({ children, ...props }: BottomSheetProps, ref: BottomSheetForwardedRef) => {
+export const BottomSheet = forwardRef(({ children, ...props }: BottomSheetProps, ref: ForwardedRef<RNBottomSheet>) => {
   const insets = useSafeAreaInsets()
 
   return (

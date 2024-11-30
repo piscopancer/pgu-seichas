@@ -13,6 +13,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: './src/assets/images/icon.png',
   userInterfaceStyle: 'automatic',
   backgroundColor: colors.neutral[950],
+  platforms: ['android'],
+  splash: {
+    backgroundColor: colors.neutral[950],
+  },
   notification: {
     icon: './src/assets/images/icon.png',
   },
@@ -22,14 +26,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: './src/assets/images/icon.png',
+      monochromeImage: './src/assets/images/icon.png',
       backgroundColor: colors.neutral[950],
     },
+    backgroundColor: colors.neutral[950],
     package: 'com.piscopancer.pguseichas',
   },
   experiments: {
     typedRoutes: true,
   },
-
   plugins: [
     'expo-localization',
     '@prisma/react-native',
@@ -39,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         image: './src/assets/images/splash.png',
         resizeMode: 'contain',
-        imageWidth: 200,
+        imageWidth: 250,
         backgroundColor: colors.neutral[950],
       },
     ],

@@ -1,7 +1,8 @@
 import useSubjectsQuery, { querySubjects } from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { LessonType, lessonTypesInfo } from '@/lesson'
-import { Schedule } from '@/schedule'
+import { lessonFromTo, Schedule } from '@/schedule'
+import { useDeviceStore } from '@/secure-store'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
 import { LucideDot, LucideIcon, LucideRotateCcw } from 'lucide-react-native'
@@ -108,16 +109,16 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
   const subjectsQuery = useSubjectsQuery()
   const tutorsQuery = useTutorsQuery()
   const tutor = tutorsQuery.data?.find((t) => t.id === props.subject?.tutorId)
+  const [viewMode] = useDeviceStore('lessonViewMode')
 
   if (!tutorsQuery.data || !subjectsQuery.data) return null
 
   return (
     <View className='flex-row relative border-y border-neutral-800'>
       <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-4' : 'left-6')}>
-        {/* {lessonFromTo(props.lessonIndex)} */}
-        {props.lessonIndex + 1}
+        {viewMode === 'position' && props.lessonIndex + 1}
+        {viewMode === 'time' && lessonFromTo(props.lessonIndex)}
       </Text>
-      {/* <Text className='absolute left-0 top-1/2 -translate-y-1/2 px-1 bg-neutral-900 rounded-r-md'>{props.lessonIndex + 1}</Text> */}
       {props.mode === 'view' && !props.subject ? (
         <LucideDot className='color-neutral-800 my-8 mx-auto' />
       ) : (

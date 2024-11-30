@@ -1,4 +1,4 @@
-import { BottomSheet, useBottomSheetRef } from '@/components/bottom-sheet'
+import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
@@ -21,7 +21,7 @@ const tutorStore = proxy<Prisma.TutorCreateArgs['data']>({
 export default function CreateTutor() {
   const tutorSnap = useSnapshot(tutorStore)
   const router = useRouter()
-  const rankSheetRef = useBottomSheetRef()
+  const rankSheetRef = useSheetRef()
   const createTutorMutation = useMutation({
     mutationFn: (tutor: Prisma.TutorCreateArgs) => db.tutor.create(tutor),
     onSuccess() {

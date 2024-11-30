@@ -1,4 +1,4 @@
-import { BottomSheet, useBottomSheetRef } from '@/components/bottom-sheet'
+import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
@@ -25,7 +25,7 @@ export default function SubjectScreen() {
   const tutorsQuery = useTutorsQuery()
   const [subjectName, setSubjectName] = useState<string>('')
   const [tutorId, setTutor] = useState<number | undefined>(undefined)
-  const tutorSheetRef = useBottomSheetRef()
+  const tutorSheetRef = useSheetRef()
   const canCreate = !!subjectName || tutorId !== undefined
 
   function getTutor(): string | null {

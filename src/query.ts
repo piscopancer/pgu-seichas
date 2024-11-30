@@ -9,4 +9,5 @@ export const queryKeys = {
   subject: (id: number) => [...queryKeys.subjects, id],
   schedules: (filters?: { search?: string }) => ['schedules', filters],
   schedule: (id: number) => [...queryKeys.schedules(), id],
+  publisherStatus: (token: string) => ['publisher-token', token],
 } as const

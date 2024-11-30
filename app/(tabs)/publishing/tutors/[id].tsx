@@ -1,5 +1,5 @@
 // import SheetSelect from '@/components/sheet-select'
-import { BottomSheet, useBottomSheetRef } from '@/components/bottom-sheet'
+import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
@@ -52,7 +52,7 @@ export default function TutorScreen() {
     },
   })
   const changedSnap = useSnapshot(changedStore)
-  const rankSheetRef = useBottomSheetRef()
+  const rankSheetRef = useSheetRef()
 
   useEffect(() => {
     return () => {

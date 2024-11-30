@@ -13,7 +13,7 @@ model Tutor {
   name       String
   surname    String
   middlename String
-  rank       String? // null | "assistantTutor" (ассистент) | "tutor" (преподаватель) | "seniorTutor" (старший преподаватель) | "assistantProfessor" (доцент) | "professor" (профессор)
+  rank       String?
   subjects   Subject[]
 }
 
@@ -27,7 +27,7 @@ model Subject {
 
 model Lesson {
   id        Int      @id @default(autoincrement())
-  type      String? // null | "practical" | "seminar" | "lecture"
+  type      String?
   subjectId Int?
   subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   place     String?
@@ -49,4 +49,10 @@ model Schedule {
   name      String
   updatedAt DateTime @default(now())
   days      Day[]
+}
+
+model PublisherToken {
+  id        Int     @id @default(autoincrement())
+  value     String  @unique
+  activated Boolean @default(false)
 }
