@@ -1,9 +1,8 @@
 import { Prisma } from '@prisma/client/react-native'
-import { differenceInMinutes, isAfter, startOfToday } from 'date-fns'
-import { getTimezoneOffset } from 'date-fns-tz'
+import { addDays, differenceInMinutes, isAfter, startOfToday } from 'date-fns'
 import { db } from './db'
 import { ScheduleStore } from './store/schedule'
-import { timezone } from './utils'
+import { getDayOfWeekIndex } from './utils'
 
 export const weekdays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'] as const
 export const maxLessons = 5
@@ -19,7 +18,7 @@ type LessonsTimestamps = {
   to: { h: number; m: number }
 }[]
 
-const hOffset = getTimezoneOffset(timezone) / (1000 * 60 * 60)
+const hOffset = 3
 
 const lessonsTimestamps: LessonsTimestamps = [
   {
@@ -44,12 +43,7 @@ const lessonsTimestamps: LessonsTimestamps = [
   },
 ]
 
-type NextLesson = {
-  lesson: Lesson
-  minutesRemaining: number
-}
-
-export function getNextLessonIndex() {
+export function getNextLessonIndexFromNow() {
   const now = new Date()
   const lessonsStartDates = lessonsTimestamps.map((ts) => {
     const start = startOfToday()
@@ -68,26 +62,25 @@ export function getNextLessonIndex() {
   return nextLessonIndex
 }
 
-export function getMinsToNextLesson(): number | null {
-  // const now = new Date()
-  const now = new Date('2024-11-26 08:29:00')
+export function getNextLessonDate(nextLessonPosition: LessonPosition) {
+  const todayIndex = getDayOfWeekIndex()
+  let lessonDate = new Date()
+  const lessonDayOffset = nextLessonPosition.dayIndex - todayIndex
+  lessonDate = addDays(lessonDate, lessonDayOffset > 0 ? lessonDayOffset : 7 + lessonDayOffset)
+  const lessonTimestamp = lessonsTimestamps[nextLessonPosition.index]
+  lessonDate.setHours(lessonTimestamp.from.h)
+  lessonDate.setMinutes(lessonTimestamp.from.m)
+  return lessonDate
+}
+
+export function getMinsToNextLesson(nextLessonIndex: number): number {
+  const now = new Date()
   const lessonsStartDates = lessonsTimestamps.map((ts) => {
     const start = startOfToday()
     start.setHours(ts.from.h)
     start.setMinutes(ts.from.m)
     return start
   })
-  let nextLessonIndex: number | null = null
-  for (let i = 0; i < lessonsStartDates.length; i++) {
-    const lessonStartDate = lessonsStartDates[i]
-    if (isAfter(lessonStartDate, now)) {
-      nextLessonIndex = i
-      break
-    }
-  }
-  if (nextLessonIndex === null) {
-    return null
-  }
   const minutesRemaining = differenceInMinutes(lessonsStartDates[nextLessonIndex], now)
   return minutesRemaining
 }
@@ -259,4 +252,62 @@ export async function updateSchedule(id: number, updatedSchedule: ScheduleStore)
       },
     },
   })
+}
+
+type LessonPosition = {
+  dayIndex: number
+  index: number
+  isToday: boolean
+}
+
+export function determineNextLesson(schedule: Schedule): LessonPosition | null {
+  // determine index of next lesson, check if this lesson is existent
+  // if there's no lesson today or indep work day or holiday, check next day, next, next, next until hit
+  // if it's 3d day of week and there are only lessons on this day, I need to check today (3d) and if it's empty, apply same checking to the next index (4d) and when index hits 6 i need to make next index 0
+  let nextLesson: LessonPosition | null = null
+  for (let i = getDayOfWeekIndex(); i < i + 7; i++) {
+    let dayOfWeekIndex = i
+    // skip monday
+    if (dayOfWeekIndex === 6) {
+      continue
+    }
+    // transit to next week
+    if (dayOfWeekIndex > 6) {
+      dayOfWeekIndex = dayOfWeekIndex - 7
+    }
+    const day = schedule.days[dayOfWeekIndex]
+    // starting from today, if no studies, will continue for the rest of 6 days until hits one with studies
+    const studyDay = !day.holiday && !day.independentWorkDay && day.lessons.filter((l) => l.subjectId).length > 0
+    if (!studyDay) continue
+    const isToday = dayOfWeekIndex === getDayOfWeekIndex()
+    const nextLessonIndexFromDay = getNextLessonIndexFromDay(day, isToday)
+    if (nextLessonIndexFromDay !== null) {
+      nextLesson = {
+        dayIndex: dayOfWeekIndex,
+        index: nextLessonIndexFromDay,
+        isToday,
+      }
+      break
+    }
+  }
+  return nextLesson
+}
+
+function getNextLessonIndexFromDay(day: Schedule['days'][number], isToday: boolean): number | null {
+  // if not today, start from the start of the day, checking for the first collision with lesson
+  // if today, determine current lesson index and
+  const lessonIndexToStartFrom = isToday ? getNextLessonIndexFromNow() : 0
+  if (lessonIndexToStartFrom === null) {
+    return null
+  }
+  const lessonIndexesToCheck: number[] = []
+  for (let i = lessonIndexToStartFrom; i < 5; i++) {
+    lessonIndexesToCheck.push(i)
+  }
+  for (const i of lessonIndexesToCheck) {
+    if (day.lessons[i].subjectId) {
+      return i
+    }
+  }
+  return null
 }

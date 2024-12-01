@@ -1,8 +1,8 @@
+import { useDeviceStore } from '@/device-store'
 import useSubjectsQuery, { querySubjects } from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { LessonType, lessonTypesInfo } from '@/lesson'
 import { lessonFromTo, Schedule } from '@/schedule'
-import { useDeviceStore } from '@/secure-store'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
 import { LucideDot, LucideIcon, LucideRotateCcw } from 'lucide-react-native'
@@ -110,6 +110,7 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
   const tutorsQuery = useTutorsQuery()
   const tutor = tutorsQuery.data?.find((t) => t.id === props.subject?.tutorId)
   const [viewMode] = useDeviceStore('lessonViewMode')
+  const typeColor = props.lesson.type ? lessonTypesInfo[props.lesson.type as LessonType].color : null
 
   if (!tutorsQuery.data || !subjectsQuery.data) return null
 
@@ -120,7 +121,7 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
         {viewMode === 'time' && lessonFromTo(props.lessonIndex)}
       </Text>
       {props.mode === 'view' && !props.subject ? (
-        <LucideDot className='color-neutral-800 my-8 mx-auto' />
+        <LucideDot className='color-neutral-700 my-8 mx-auto' />
       ) : (
         <>
           <Pressable
@@ -168,7 +169,7 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
               className='border-t border-neutral-800'
             >
               <View className='relative'>
-                {props.TypeIcon && <props.TypeIcon strokeWidth={1.5} className='color-indigo-500 absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 size-5' />}
+                {props.TypeIcon && <props.TypeIcon strokeWidth={1.5} color={typeColor ?? undefined} className='absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 size-5' />}
                 <Text className={cn('text-center text-lg py-2 px-5 line-clamp-1', props.lesson.type ? '' : 'dark:text-neutral-500')}>{props.lesson.type ? capitalizeFirstLetter(lessonTypesInfo[props.lesson.type as LessonType].long) : props.mode === 'view' ? '?' : 'Тип'}</Text>
               </View>
             </Pressable>

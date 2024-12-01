@@ -3,8 +3,9 @@ import { atom, useAtom } from 'jotai'
 import { z } from 'zod'
 
 const schemas = {
-  publisherToken: z.string().nullable().catch(null),
+  publisherToken: z.string({ coerce: true }).nullable().catch(null),
   lessonViewMode: z.union([z.literal('position'), z.literal('time')]).catch('position'),
+  selectedScheduleId: z.number({ coerce: true }).nonnegative().nullable().catch(null),
 }
 
 type Atom<V> = ReturnType<typeof atom<V>>
@@ -33,13 +34,13 @@ export function useDeviceStore<K extends keyof Atoms>(key: K) {
     if (value instanceof Function) {
       const v = value(storeValue)
       if (v) {
-        return deviceStore.setItemAsync(key, v)
+        return deviceStore.setItemAsync(key, String(v))
       } else {
         return deviceStore.deleteItemAsync(key)
       }
     } else {
       if (value) {
-        return deviceStore.setItemAsync(key, value)
+        return deviceStore.setItemAsync(key, String(value))
       } else {
         return deviceStore.deleteItemAsync(key)
       }

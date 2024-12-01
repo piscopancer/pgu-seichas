@@ -52,20 +52,14 @@ export default function SchedulesScreen() {
               <View className='flex-1 mr-4'>
                 <Text className='mb-3 line-clamp-1 mr-auto text-xl'>{schedule.name}</Text>
                 <View className='flex-row gap-2 mb-3'>
-                  <View className='flex-row gap-1.5'>
+                  <View className='flex-row h-6'>
                     {schedule.days.map((d, i) => (
-                      <View key={i} className={cn('size-4 rounded-full', d._count.lessons ? 'bg-indigo-500' : 'bg-indigo-500/40')} />
+                      <View key={i} style={{ marginLeft: 10 * i }} className={cn('absolute size-6 rounded-full border-2 border-neutral-950', d._count.lessons ? 'bg-indigo-500' : 'bg-indigo-800')} />
                     ))}
                   </View>
-                  {/* <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule._count.days} дней</Text>
-                  <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{schedule.days.map((d) => d._count.lessons).reduce((l, r) => l + r)} пар</Text> */}
                 </View>
-                <Text className='dark:text-neutral-500'>
-                  Обновлено {formatDistanceToNow(schedule.updatedAt, { locale: ru, addSuffix: true })}
-                  {/* Обновлено {format(schedule.updatedAt, 'd MMMM yyyy', { locale: ru })} в {format(schedule.updatedAt, 'HH:mm')} */}
-                </Text>
+                <Text className='dark:text-neutral-500'>Обновлено {formatDistanceToNow(schedule.updatedAt, { locale: ru, addSuffix: true })}</Text>
               </View>
-              {/* <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' /> */}
             </Pressable>
           </Link>
         )}

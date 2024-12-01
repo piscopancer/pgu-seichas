@@ -1,4 +1,4 @@
-import { getNextLessonIndex, maxLessons, Schedule } from '@/schedule'
+import { getNextLessonIndexFromNow, maxLessons, Schedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { cn, zonedDate } from '@/utils'
 import { LucideBed, LucideCake, LucideChevronDown, LucideChevronUp, LucideIcon, LucideUtensils } from 'lucide-react-native'
@@ -101,7 +101,7 @@ function Weekday(props: WeekdayProps) {
           )}
           <View className={cn('gap-3', overlay && 'opacity-50 pointer-events-none')}>
             {Array.from({ length: maxLessons }).map((_, lessonI) => {
-              const next = today && getNextLessonIndex() === lessonI
+              const next = today && getNextLessonIndexFromNow() === lessonI
               return (
                 <Fragment key={lessonI}>
                   {props.mode === 'edit' && <LessonEdit mode='edit' lesson={props.dayStore.lessons[lessonI]} next={next} dayIndex={props.dayIndex} lessonIndex={lessonI} />}

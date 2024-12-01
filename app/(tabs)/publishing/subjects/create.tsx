@@ -1,17 +1,17 @@
-import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
+import { useSheetRef } from '@/components/bottom-sheet'
+import SubjectTutorSheet from '@/components/subject-tutor-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { qc, queryKeys } from '@/query'
 import { cn, colors } from '@/utils'
-import { BottomSheetView } from '@gorhom/bottom-sheet'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { LucideUserRound, LucideUserRoundX } from 'lucide-react-native'
+import { LucideUserRound } from 'lucide-react-native'
 import { useState } from 'react'
-import { FlatList, Pressable, ScrollView } from 'react-native'
+import { Pressable, ScrollView } from 'react-native'
 
 export default function SubjectScreen() {
   const router = useRouter()
@@ -24,15 +24,15 @@ export default function SubjectScreen() {
   })
   const tutorsQuery = useTutorsQuery()
   const [subjectName, setSubjectName] = useState<string>('')
-  const [tutorId, setTutor] = useState<number | undefined>(undefined)
+  const [tutorId, setTutorId] = useState<number | null>(null)
   const tutorSheetRef = useSheetRef()
-  const canCreate = !!subjectName || tutorId !== undefined
+  const canCreate = !!subjectName || tutorId !== null
 
   function getTutor(): string | null {
     if (!tutorsQuery.data) {
       return '...'
     }
-    if (tutorId !== undefined) {
+    if (tutorId !== null) {
       const { name, surname, middlename } = tutorsQuery.data.filter((t) => t.id === tutorId)[0]
       return `${surname} ${name} ${middlename}`
     } else {
@@ -61,59 +61,29 @@ export default function SubjectScreen() {
           <LucideUserRound strokeWidth={1} className='color-neutral-500 mr-5' />
           <Text className={cn('text-lg line-clamp-1', getTutor() ? '' : 'dark:text-neutral-500')}>{getTutor() ?? 'Не указан'}</Text>
         </Pressable>
-        <BottomSheet ref={tutorSheetRef}>
-          <BottomSheetView>
-            <Pressable
-              android_ripple={{ color: colors.neutral[700] }}
-              onPress={() => {
-                setTutor(undefined)
-                tutorSheetRef.current?.close()
-              }}
-              className='px-6 py-4 flex-row items-center border-b border-neutral-800'
-            >
-              <LucideUserRoundX strokeWidth={1} className='mr-5 color-neutral-500' />
-              <Text className='text-lg'>Не указан</Text>
-            </Pressable>
-            <FlatList
-              data={tutorsQuery.data ?? []}
-              renderItem={({ item: tutor }) => (
-                <Pressable
-                  android_ripple={{ color: colors.neutral[700] }}
-                  onPress={() => {
-                    setTutor(tutor.id)
-                    tutorSheetRef.current?.close()
-                  }}
-                  className='px-6 py-4 flex-row items-center'
-                >
-                  <LucideUserRound strokeWidth={1} className='mr-5 color-neutral-500' />
-                  <Text className='text-lg line-clamp-1'>
-                    {tutor.surname}{' '}
-                    <Text className='dark:text-neutral-500'>
-                      {tutor.name} {tutor.middlename}
-                    </Text>
-                  </Text>
-                </Pressable>
-              )}
-            />
-          </BottomSheetView>
-        </BottomSheet>
+        <SubjectTutorSheet ref={tutorSheetRef} onSelect={setTutorId} />
         <Pressable
           onPress={() => {
             createSubjectMutation.mutate({
               data: {
                 name: subjectName,
-                tutor: {
-                  connect: {
-                    id: tutorId,
-                  },
-                },
+                ...(tutorId !== null
+                  ? {
+                      tutor: {
+                        connect: {
+                          id: tutorId,
+                        },
+                      },
+                    }
+                  : {}),
               },
             })
           }}
           disabled={!canCreate}
+          android_ripple={{ color: colors.indigo[300] }}
           className='bg-indigo-500 disabled:opacity-50 mx-6 rounded-md py-4 px-6'
         >
-          <Text className='font-sans-bold text-center text-lg'>Сохранить</Text>
+          <Text className='font-sans-bold text-center text-lg'>Добавить</Text>
         </Pressable>
       </>
     </ScrollView>

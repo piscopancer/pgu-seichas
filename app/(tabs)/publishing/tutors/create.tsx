@@ -1,14 +1,14 @@
-import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
+import { useSheetRef } from '@/components/bottom-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
+import TutorRankSheet from '@/components/tutor-rank-sheet'
 import { db } from '@/db'
-import { Rank, ranks, ranksInfo, tutorSchema } from '@/tutor'
-import { capitalizeFirstLetter, cn, colors } from '@/utils'
-import { BottomSheetView } from '@gorhom/bottom-sheet'
+import { Rank, ranksInfo, tutorSchema } from '@/tutor'
+import { capitalizeFirstLetter, cn } from '@/utils'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { FlatList, Pressable, ScrollView, ToastAndroid } from 'react-native'
+import { Pressable, ScrollView, ToastAndroid } from 'react-native'
 import { indigo } from 'tailwindcss/colors'
 import { proxy, useSnapshot } from 'valtio'
 
@@ -42,35 +42,12 @@ export default function CreateTutor() {
         <Pressable onPress={() => rankSheetRef.current?.expand()} className='border rounded-md border-neutral-800 px-5 py-4 mx-4 mb-8'>
           <Text className={cn('text-lg', tutorSnap.rank ? '' : 'dark:text-neutral-500')}>{tutorSnap.rank ? capitalizeFirstLetter(ranksInfo[tutorSnap.rank as Rank].long) : 'Не указана'}</Text>
         </Pressable>
-        <BottomSheet ref={rankSheetRef}>
-          <BottomSheetView>
-            <Pressable
-              android_ripple={{ color: colors.neutral[700] }}
-              onPress={() => {
-                tutorStore.rank = null
-                rankSheetRef.current?.close()
-              }}
-              className='px-6 py-4 flex-row items-center border-b border-neutral-800'
-            >
-              <Text className='dark:text-neutral-500 text-lg'>Не указана</Text>
-            </Pressable>
-            <FlatList
-              data={ranks}
-              renderItem={({ item: rank }) => (
-                <Pressable
-                  android_ripple={{ color: colors.neutral[700] }}
-                  onPress={() => {
-                    tutorStore.rank = rank
-                    rankSheetRef.current?.close()
-                  }}
-                  className='px-6 py-4 flex-row items-center'
-                >
-                  <Text className='text-lg line-clamp-1'>{capitalizeFirstLetter(ranksInfo[rank].long)}</Text>
-                </Pressable>
-              )}
-            />
-          </BottomSheetView>
-        </BottomSheet>
+        <TutorRankSheet
+          ref={rankSheetRef}
+          onSelect={(rank) => {
+            tutorStore.rank = rank
+          }}
+        />
         <Pressable
           disabled={createTutorMutation.isPending}
           onPress={() => {

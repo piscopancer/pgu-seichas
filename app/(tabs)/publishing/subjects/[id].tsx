@@ -1,4 +1,6 @@
 import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
+import SheetTextInput from '@/components/sheet-text-input'
+import SubjectTutorSheet from '@/components/subject-tutor-sheet'
 import Text from '@/components/text'
 import TextInput from '@/components/text-input'
 import { db } from '@/db'
@@ -6,26 +8,18 @@ import useTutorsQuery from '@/hooks/query/use-tutors'
 import { qc, queryKeys } from '@/query'
 import { cn, colors } from '@/utils'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
-import { Prisma } from '@prisma/client'
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
+import { Prisma, Subject } from '@prisma/client'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { LucideRotateCcw, LucideUserRound, LucideUserRoundX } from 'lucide-react-native'
-import { useState } from 'react'
-import { FlatList, Pressable, ScrollView } from 'react-native'
+import { LucideUserRound } from 'lucide-react-native'
+import { forwardRef, useState } from 'react'
+import { Pressable, ScrollView } from 'react-native'
 
 async function querySubject(id: number) {
   return db.subject.findFirst({
     where: {
       id,
-    },
-    select: {
-      id: true,
-      name: true,
-      tutor: {
-        select: {
-          id: true,
-        },
-      },
     },
   })
 }
@@ -44,6 +38,7 @@ export default function SubjectScreen() {
       router.back()
     },
   })
+  const confirmDeleteSheetRef = useSheetRef()
   const tutorsQuery = useTutorsQuery()
   const [changedSubjectName, setChangedSubjectName] = useState<string | undefined>(undefined)
   const [changedTutorId, setChangedTutorId] = useState<number | null | undefined>(undefined)
@@ -54,7 +49,7 @@ export default function SubjectScreen() {
     if (!tutorsQuery.data) {
       return '...'
     }
-    const tutorId = changedTutorId !== undefined ? changedTutorId : subjectQuery.data?.tutor?.id
+    const tutorId = changedTutorId !== undefined ? changedTutorId : subjectQuery.data?.tutorId
     if (tutorId) {
       const { name, surname, middlename } = tutorsQuery.data.filter((t) => t.id === tutorId)[0]
       return `${surname} ${name} ${middlename}`
@@ -87,53 +82,7 @@ export default function SubjectScreen() {
             <LucideUserRound strokeWidth={1} className='color-neutral-500 mr-5' />
             <Text className={cn('text-lg line-clamp-1', getTutor() ? '' : 'dark:text-neutral-500')}>{getTutor() ?? 'Не указан'}</Text>
           </Pressable>
-          <BottomSheet ref={tutorSheetRef}>
-            <BottomSheetView>
-              <Pressable
-                android_ripple={{ color: colors.neutral[700] }}
-                onPress={() => {
-                  setChangedTutorId(undefined)
-                  tutorSheetRef.current?.close()
-                }}
-                className='px-6 py-4 flex-row items-center border-b border-neutral-800'
-              >
-                <LucideRotateCcw strokeWidth={1} className='mr-5 color-neutral-500' />
-                <Text className='text-lg'>Отменить изменения</Text>
-              </Pressable>
-              <Pressable
-                android_ripple={{ color: colors.neutral[700] }}
-                onPress={() => {
-                  setChangedTutorId(null)
-                  tutorSheetRef.current?.close()
-                }}
-                className='px-6 py-4 flex-row items-center border-b border-neutral-800'
-              >
-                <LucideUserRoundX strokeWidth={1} className='mr-5 color-neutral-500' />
-                <Text className='text-lg'>Не указан</Text>
-              </Pressable>
-              <FlatList
-                data={tutorsQuery.data ?? []}
-                renderItem={({ item: tutor }) => (
-                  <Pressable
-                    android_ripple={{ color: colors.neutral[700] }}
-                    onPress={() => {
-                      setChangedTutorId(subjectQuery.data!.tutor?.id === tutor.id ? undefined : tutor.id)
-                      tutorSheetRef.current?.close()
-                    }}
-                    className='px-6 py-4 flex-row items-center'
-                  >
-                    <LucideUserRound strokeWidth={1} className='mr-5 color-neutral-500' />
-                    <Text className='text-lg line-clamp-1'>
-                      {tutor.surname}{' '}
-                      <Text className='dark:text-neutral-500'>
-                        {tutor.name} {tutor.middlename}
-                      </Text>
-                    </Text>
-                  </Pressable>
-                )}
-              />
-            </BottomSheetView>
-          </BottomSheet>
+          <SubjectTutorSheet ref={tutorSheetRef} onSelect={setChangedTutorId} />
           <Pressable
             onPress={() => {
               updateSubjectMutation.mutate({
@@ -143,7 +92,7 @@ export default function SubjectScreen() {
                     ...(changedTutorId === null
                       ? {
                           disconnect: {
-                            id: subjectQuery.data?.tutor?.id ?? undefined,
+                            id: subjectQuery.data?.tutorId ?? undefined,
                           },
                         }
                       : {
@@ -159,12 +108,47 @@ export default function SubjectScreen() {
               })
             }}
             disabled={!canUpdate}
-            className='bg-indigo-500 disabled:opacity-50 mx-6 rounded-md py-4 px-6'
+            android_ripple={{ color: colors.indigo[300] }}
+            className='bg-indigo-500 disabled:opacity-50 mx-6 rounded-md py-4 px-6 mb-4'
           >
             <Text className='font-sans-bold text-center text-lg'>Сохранить</Text>
           </Pressable>
+          <Pressable android_ripple={{ color: colors.rose[700] }} onPress={() => confirmDeleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md bg-red-500/20'>
+            <Text className='text-center text-lg font-sans-bold dark:text-rose-500'>Удалить</Text>
+          </Pressable>
+          <ConfirmDeleteSheet ref={confirmDeleteSheetRef} subject={subjectQuery.data} />
         </>
       ) : null}
     </ScrollView>
   )
 }
+
+const ConfirmDeleteSheet = forwardRef<BottomSheetMethods, { subject: Subject }>((props, ref) => {
+  const [confirmSubject, setConfirmSubject] = useState('')
+  const router = useRouter()
+  const deleteSubjectMutation = useMutation({
+    mutationFn: () =>
+      db.subject.delete({
+        where: {
+          id: props.subject.id,
+        },
+      }),
+    async onSuccess() {
+      await qc.invalidateQueries({ queryKey: queryKeys.subjects })
+      router.replace('/publishing/subjects')
+    },
+  })
+
+  return (
+    <BottomSheet ref={ref}>
+      <BottomSheetView>
+        <Text className='mb-4 mt-6 mx-6 text-lg text-center font-sans-bold'>{props.subject.name}</Text>
+        <Text className='mb-6 mx-6 text-lg text-center'>Чтобы удалить предмет, введите его название</Text>
+        <SheetTextInput defaultValue={confirmSubject} placeholder={props.subject.name} onChangeText={(text) => setConfirmSubject(text.trim())} className='mb-4 mx-6 focus:border-rose-500 caret-rose-500' />
+        <Pressable onPress={() => deleteSubjectMutation.mutate()} disabled={confirmSubject.toLowerCase() !== props.subject.name.toLowerCase() || deleteSubjectMutation.isPending} className='disabled:opacity-50 py-4 bg-rose-500/20 rounded-md mx-6 mb-6'>
+          <Text className='text-center text-lg dark:text-rose-500 font-sans-bold'>Удалить</Text>
+        </Pressable>
+      </BottomSheetView>
+    </BottomSheet>
+  )
+})

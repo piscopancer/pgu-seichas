@@ -2,9 +2,9 @@ import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
 import SheetTextInput from '@/components/sheet-text-input'
 import Text from '@/components/text'
 import { db } from '@/db'
+import { DeviceStore, useDeviceStore } from '@/device-store'
 import usePublisherStatus from '@/hooks/query/use-publisher-status'
 import { qc, queryKeys } from '@/query'
-import { DeviceStore, useDeviceStore } from '@/secure-store'
 import { cn, colors, objectEntries } from '@/utils'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
@@ -200,7 +200,7 @@ const PublisherSheet = forwardRef<BottomSheetMethods, {}>((props, ref) => {
                 validateTokenMutation.mutate(tokenInputText.current)
               }}
               android_ripple={{ color: colors.neutral[700] }}
-              className='rounded-md bg-neutral-800 py-4 mx-6'
+              className='rounded-md bg-neutral-800 py-3 mx-6'
             >
               <Text className='dark:text-neutral-200 text-lg text-center'>Подтвердить</Text>
             </Pressable>

@@ -1,6 +1,6 @@
 import { db } from '@/db'
+import { useDeviceStore } from '@/device-store'
 import { queryKeys } from '@/query'
-import { useDeviceStore } from '@/secure-store'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 export async function checkTokenActivated(value: string): Promise<boolean> {

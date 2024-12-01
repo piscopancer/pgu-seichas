@@ -1,4 +1,5 @@
 import { db } from '@/db'
+import { useDeviceStore } from '@/device-store'
 import useSubjectsQuery from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { lessonTypes, lessonTypesInfo } from '@/lesson'
@@ -7,6 +8,7 @@ import { Schedule, updateSchedule, weekdays } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, colors } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
+import { Portal } from '@gorhom/portal'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
@@ -142,6 +144,14 @@ export function ScheduleViewView({ schedule }: ScheduleViewProps & { mode: 'view
 }
 
 function ScheduleView(props: ScheduleViewProps) {
+  const [selectedScheduleId, setSelectedScheduleId] = useDeviceStore('selectedScheduleId')
+  const router = useRouter()
+
+  function onSelectPress(id: number) {
+    setSelectedScheduleId(id)
+    router.replace('/(tabs)')
+  }
+
   return (
     <>
       <ScrollView>
@@ -160,6 +170,15 @@ function ScheduleView(props: ScheduleViewProps) {
         </View>
       </ScrollView>
       {props.mode === 'edit' && (props.schedule.id === undefined ? <CreateSchedulePressable scheduleStore={props.schedule} /> : <UpdateSchedulePressable id={props.schedule.id} scheduleStore={props.schedule} />)}
+      {props.mode === 'view' && props.schedule.id !== selectedScheduleId && (
+        <Portal>
+          <View className='absolute bottom-24 w-full'>
+            <Pressable android_ripple={{ color: colors.indigo[300] }} onPress={() => onSelectPress(props.schedule.id)} className='w-1/2 mx-auto bg-indigo-500 rounded-md py-3'>
+              <Text className='text-lg font-sans-bold text-center'>Выбрать</Text>
+            </Pressable>
+          </View>
+        </Portal>
+      )}
     </>
   )
 }

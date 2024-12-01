@@ -57,6 +57,12 @@ export function zonedToGmtTime(timeZone: string, date: Date): Date {
   return utcDate
 }
 
+export function getDayOfWeekIndex(date: Date = new Date()) {
+  const day = date.getDay()
+  const adjustedDay = day === 0 ? 6 : day - 1
+  return adjustedDay
+}
+
 export function zonedDate(date: Date = new Date()): Date {
   const offset = getTimezoneOffset(timezone, date)
   // console.log(`date [${date.toISOString()}], offset [${offset / 1000}s], tz [${timezone}]`)
