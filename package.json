@@ -11,9 +11,10 @@
     "generate": "npx prisma generate",
     "studio": "npx prisma studio --port 7777",
     "prebuild": "expo prebuild -p android --clean",
-    "eas": "eas build -p android --profile preview",
     "eas-dev": "eas build -p android --profile dev",
     "eas-preview": "eas build -p android --profile preview",
+    "build-aab": "npx react-native build-android --mode=release",
+    "build-apk": "cd android && ./gradlew assembleRelease",
     "ios": "expo run:ios"
   },
   "dependencies": {
@@ -48,21 +49,14 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss": "^3.4.15",
     "valtio": "^2.1.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "tailwindcss": "3.3.2",
     "@babel/core": "^7.26.0",
     "@types/react": "^18.3.12",
     "prisma": "^5.22.0",
     "typescript": "~5.3.3"
-  },
-  "expo": {
-    "install": {
-      "exclude": [
-        "react-native-reanimated"
-      ]
-    }
   }
 }
