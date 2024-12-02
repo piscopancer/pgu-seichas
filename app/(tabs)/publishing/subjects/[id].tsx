@@ -14,7 +14,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { LucideUserRound } from 'lucide-react-native'
 import { forwardRef, useState } from 'react'
-import { Pressable, ScrollView } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 
 async function querySubject(id: number) {
   return db.subject.findFirst({
@@ -113,8 +113,12 @@ export default function SubjectScreen() {
           >
             <Text className='font-sans-bold text-center text-lg'>Сохранить</Text>
           </Pressable>
-          <Pressable android_ripple={{ color: colors.rose[700] }} onPress={() => confirmDeleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md bg-red-500/20'>
-            <Text className='text-center text-lg font-sans-bold dark:text-rose-500'>Удалить</Text>
+          <Pressable onPress={() => router.back()} android_ripple={{ color: colors.neutral[700] }} className='mx-6 py-4 rounded-md bg-neutral-900 mb-6'>
+            <Text className='text-center text-lg'>Отменить</Text>
+          </Pressable>
+          <View className='border-b border-dashed border-neutral-800 mx-6 mb-6' />
+          <Pressable android_ripple={{ color: colors.neutral[800] }} onPress={() => confirmDeleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md border border-neutral-800'>
+            <Text className='text-center text-lg'>Удалить</Text>
           </Pressable>
           <ConfirmDeleteSheet ref={confirmDeleteSheetRef} subject={subjectQuery.data} />
         </>
@@ -145,8 +149,15 @@ const ConfirmDeleteSheet = forwardRef<BottomSheetMethods, { subject: Subject }>(
         <Text className='mb-4 mt-6 mx-6 text-lg text-center font-sans-bold'>{props.subject.name}</Text>
         <Text className='mb-6 mx-6 text-lg text-center'>Чтобы удалить предмет, введите его название</Text>
         <SheetTextInput defaultValue={confirmSubject} placeholder={props.subject.name} onChangeText={(text) => setConfirmSubject(text.trim())} className='mb-4 mx-6 focus:border-rose-500 caret-rose-500' />
-        <Pressable onPress={() => deleteSubjectMutation.mutate()} disabled={confirmSubject.toLowerCase() !== props.subject.name.toLowerCase() || deleteSubjectMutation.isPending} className='disabled:opacity-50 py-4 bg-rose-500/20 rounded-md mx-6 mb-6'>
-          <Text className='text-center text-lg dark:text-rose-500 font-sans-bold'>Удалить</Text>
+        <Pressable
+          android_ripple={{ color: colors.rose[700] }}
+          onPress={() => deleteSubjectMutation.mutate()}
+          disabled={confirmSubject.toLowerCase() !== props.subject.name.toLowerCase() || deleteSubjectMutation.isPending}
+          className='disabled:opacity-50 disabled:bg-neutral-800 py-4 bg-rose-500/20 rounded-md mx-6 mb-6'
+        >
+          <Text disabled={confirmSubject.toLowerCase() !== props.subject.name.toLowerCase() || deleteSubjectMutation.isPending} className='text-center text-lg dark:text-rose-500 disabled:dark:text-neutral-200'>
+            Удалить
+          </Text>
         </Pressable>
       </BottomSheetView>
     </BottomSheet>

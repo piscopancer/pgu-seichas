@@ -32,14 +32,14 @@ export default function CreateTutor() {
   return (
     <ScrollView overScrollMode='never'>
       <>
-        <Text className='mt-12 mb-2 ml-9 dark:text-neutral-500'>Фамилия</Text>
-        <TextInput className='mb-4 mx-4' onChange={({ nativeEvent: { text } }) => (tutorStore.surname = text.trim())} />
-        <Text className='mb-2 ml-9 dark:text-neutral-500'>Имя</Text>
-        <TextInput onChange={({ nativeEvent: { text } }) => (tutorStore.name = text.trim())} className='mb-4 mx-4' />
-        <Text className='mb-2 ml-9 dark:text-neutral-500'>Отчество</Text>
-        <TextInput onChange={({ nativeEvent: { text } }) => (tutorStore.middlename = text.trim())} className='mb-4 mx-4' />
-        <Text className='mb-2 ml-9 dark:text-neutral-500'>Должность</Text>
-        <Pressable onPress={() => rankSheetRef.current?.expand()} className='border rounded-md border-neutral-800 px-5 py-4 mx-4 mb-8'>
+        <Text className='mt-12 mb-2 ml-11 dark:text-neutral-500'>Фамилия</Text>
+        <TextInput className='mb-4 mx-6' onChange={({ nativeEvent: { text } }) => (tutorStore.surname = text.trim())} />
+        <Text className='mb-2 ml-11 dark:text-neutral-500'>Имя</Text>
+        <TextInput onChange={({ nativeEvent: { text } }) => (tutorStore.name = text.trim())} className='mb-4 mx-6' />
+        <Text className='mb-2 ml-11 dark:text-neutral-500'>Отчество</Text>
+        <TextInput onChange={({ nativeEvent: { text } }) => (tutorStore.middlename = text.trim())} className='mb-4 mx-6' />
+        <Text className='mb-2 ml-11 dark:text-neutral-500'>Должность</Text>
+        <Pressable onPress={() => rankSheetRef.current?.expand()} className='border rounded-md border-neutral-800 px-5 py-4 mx-6 mb-8'>
           <Text className={cn('text-lg', tutorSnap.rank ? '' : 'dark:text-neutral-500')}>{tutorSnap.rank ? capitalizeFirstLetter(ranksInfo[tutorSnap.rank as Rank].long) : 'Не указана'}</Text>
         </Pressable>
         <TutorRankSheet
@@ -61,7 +61,7 @@ export default function CreateTutor() {
               ToastAndroid.show(errorMsg, ToastAndroid.SHORT)
             }
           }}
-          className='mb-12 mx-4 py-4 px-6 bg-indigo-500 rounded-md'
+          className='mb-12 mx-6 py-4 px-6 bg-indigo-500 rounded-md'
           android_ripple={{ color: indigo[300] }}
         >
           <Text className='text-center text-lg font-sans-bold'>Добавить</Text>

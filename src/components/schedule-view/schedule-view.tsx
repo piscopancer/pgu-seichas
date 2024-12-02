@@ -8,7 +8,6 @@ import { Schedule, updateSchedule, weekdays } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, colors } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
-import { Portal } from '@gorhom/portal'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
@@ -59,10 +58,11 @@ export function ScheduleViewEdit({ schedule }: ScheduleViewProps & { mode: 'edit
               sheetOpenFor.current = undefined
             }
           }}
-          className='px-6 py-4 border-b border-neutral-800'
+          className='px-6 py-4'
         >
-          <Text className='dark:text-neutral-500 text-lg'>Предмет не указан</Text>
+          <Text className='text-lg'>Предмет не указан</Text>
         </Pressable>
+        <View className='border-b border-neutral-800 mx-6' />
         <BottomSheetFlatList
           scrollEnabled
           data={subjectsQuery.data ?? []}
@@ -171,13 +171,11 @@ function ScheduleView(props: ScheduleViewProps) {
       </ScrollView>
       {props.mode === 'edit' && (props.schedule.id === undefined ? <CreateSchedulePressable scheduleStore={props.schedule} /> : <UpdateSchedulePressable id={props.schedule.id} scheduleStore={props.schedule} />)}
       {props.mode === 'view' && props.schedule.id !== selectedScheduleId && (
-        <Portal>
-          <View className='absolute bottom-24 w-full'>
-            <Pressable android_ripple={{ color: colors.indigo[300] }} onPress={() => onSelectPress(props.schedule.id)} className='w-1/2 mx-auto bg-indigo-500 rounded-md py-3'>
-              <Text className='text-lg font-sans-bold text-center'>Выбрать</Text>
-            </Pressable>
-          </View>
-        </Portal>
+        <View className='absolute bottom-4 right-0 w-full'>
+          <Pressable android_ripple={{ color: colors.indigo[300] }} onPress={() => onSelectPress(props.schedule.id)} className='w-1/2 mx-auto bg-indigo-500 rounded-md py-3'>
+            <Text className='text-lg font-sans-bold text-center'>Выбрать</Text>
+          </Pressable>
+        </View>
       )}
     </>
   )

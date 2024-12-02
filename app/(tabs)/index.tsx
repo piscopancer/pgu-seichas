@@ -67,6 +67,7 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
     const nextLessonDate = getNextLessonDate(nextLessonPosition)
     timeToNextLesson = formatDistanceStrict(nextLessonDate, new Date(), {
       locale: ru,
+      roundingMethod: 'floor',
     })
   }
 
@@ -120,8 +121,8 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
 
                 return (
                   <View key={lesson.id} className='flex-row items-center'>
-                    <Text className={cn('mr-auto', next ? 'dark:text-indigo-500' : subject ? 'dark:text-neutral-200' : 'dark:text-neutral-500')}>{subject ? subject.name : '-'}</Text>
-                    {lesson.place && <Text className={cn('font-mono', next ? 'dark:text-indigo-500' : 'dark:text-neutral-500 ')}>{lesson.place}</Text>}
+                    <Text className={cn('flex-1 line-clamp-1', next ? 'dark:text-indigo-500' : subject ? 'dark:text-neutral-200' : 'dark:text-neutral-500')}>{subject ? subject.name : '-'}</Text>
+                    {lesson.place && <Text className={cn('font-mono flex-1 text-right', next ? 'dark:text-indigo-500' : 'dark:text-neutral-500 ')}>{lesson.place}</Text>}
                   </View>
                 )
               })

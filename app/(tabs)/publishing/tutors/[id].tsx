@@ -14,8 +14,8 @@ import { Prisma } from '@prisma/client'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { forwardRef, useEffect, useState } from 'react'
-import { Pressable, ScrollView, ToastAndroid } from 'react-native'
-import { indigo, neutral } from 'tailwindcss/colors'
+import { Pressable, ScrollView, ToastAndroid, View } from 'react-native'
+import { indigo } from 'tailwindcss/colors'
 import { proxy, useSnapshot } from 'valtio'
 
 async function queryTutor(id: number) {
@@ -92,7 +92,7 @@ export default function TutorScreen() {
               changedStore.rank = (tutorQuery.data!.rank as Rank | null) === rank ? undefined : rank
             }}
           />
-          <Pressable
+          {/* <Pressable
             onPress={() => {
               if (tutorQuery.data) {
                 changedStore.name = tutorQuery.data.name
@@ -105,7 +105,7 @@ export default function TutorScreen() {
             android_ripple={{ color: neutral[800] }}
           >
             <Text className='text-center text-lg'>Сбросить</Text>
-          </Pressable>
+          </Pressable> */}
           <Pressable
             disabled={updateTutorMutation.isPending}
             onPress={() => {
@@ -133,8 +133,12 @@ export default function TutorScreen() {
           >
             <Text className='text-center text-lg font-sans-bold'>Сохранить</Text>
           </Pressable>
-          <Pressable android_ripple={{ color: colors.rose[700] }} onPress={() => confirmDeleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md bg-red-500/20'>
-            <Text className='text-center text-lg font-sans-bold dark:text-rose-500'>Удалить</Text>
+          <Pressable onPress={() => router.back()} android_ripple={{ color: colors.neutral[700] }} className='mx-6 py-4 rounded-md bg-neutral-900 mb-6'>
+            <Text className='text-center text-lg'>Отменить</Text>
+          </Pressable>
+          <View className='border-b border-dashed border-neutral-800 mx-6 mb-6' />
+          <Pressable android_ripple={{ color: colors.neutral[800] }} onPress={() => confirmDeleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md border border-neutral-800'>
+            <Text className='text-center text-lg'>Удалить</Text>
           </Pressable>
           <ConfirmDeleteSheet ref={confirmDeleteSheetRef} tutor={tutorQuery.data} />
         </>
@@ -169,8 +173,10 @@ const ConfirmDeleteSheet = forwardRef<BottomSheetMethods, { tutor: Tutor }>((pro
         </Text>
         <Text className='mb-6 mx-6 text-lg text-center'>Чтобы удалить преподавателя, введите его фамилию</Text>
         <SheetTextInput defaultValue={confirmSurname} placeholder={props.tutor.surname} onChangeText={(text) => setConfirmSurname(text.trim())} className='mb-4 mx-6 focus:border-rose-500 caret-rose-500' />
-        <Pressable onPress={() => deleteTutorMutation.mutate()} disabled={confirmSurname.toLowerCase() !== props.tutor.surname.toLowerCase() || deleteTutorMutation.isPending} className='disabled:opacity-50 py-4 bg-rose-500/20 rounded-md mx-6 mb-6'>
-          <Text className='text-center text-lg dark:text-rose-500 font-sans-bold'>Удалить</Text>
+        <Pressable onPress={() => deleteTutorMutation.mutate()} disabled={confirmSurname.toLowerCase() !== props.tutor.surname.toLowerCase() || deleteTutorMutation.isPending} className='disabled:opacity-50 disabled:bg-neutral-800 py-4 bg-rose-500/20 rounded-md mx-6 mb-6'>
+          <Text disabled={confirmSurname.toLowerCase() !== props.tutor.surname.toLowerCase() || deleteTutorMutation.isPending} className='text-center text-lg dark:text-rose-500 disabled:dark:text-neutral-200'>
+            Удалить
+          </Text>
         </Pressable>
       </BottomSheetView>
     </BottomSheet>

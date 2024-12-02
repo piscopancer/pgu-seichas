@@ -18,8 +18,21 @@ export async function createTestData() {
   const [lebedeva_angl, brodskaya_kit, liubogoshev_kit, nastaeva_angl, osadchiy_phis, kerme_angl, savtiriova_kit, sarkisyan_ang, karatseva_angl, saakova_angl, savchenko_ling] = subjects
   const schedule = await createSchedule()
   const days = await createDays(schedule.id)
+  await createTokens()
 
   //
+
+  async function createTokens() {
+    return db.publisherToken.createMany({
+      data: [
+        {
+          value: 'anna_1234',
+        },
+        { value: 'igor_1234' },
+        { value: 'vlad_1234' },
+      ],
+    })
+  }
 
   async function createTutors() {
     return db.tutor.createManyAndReturn({

@@ -1,6 +1,6 @@
 import { db } from '@/db'
 import { queryKeys } from '@/query'
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 
 export async function queryTutors() {
   return db.tutor.findMany({
@@ -19,9 +19,11 @@ export async function queryTutors() {
   })
 }
 
-export default function useTutorsQuery() {
-  return useQuery({
-    queryKey: queryKeys.tutors,
-    queryFn: queryTutors,
-  })
+const tutorsQueryOptions = queryOptions({
+  queryKey: queryKeys.tutors,
+  queryFn: queryTutors,
+})
+
+export default function useTutorsQuery(options?: Omit<typeof tutorsQueryOptions, 'queryKey' | 'queryFn'>) {
+  return useQuery({ ...tutorsQueryOptions, ...(options ?? {}) })
 }

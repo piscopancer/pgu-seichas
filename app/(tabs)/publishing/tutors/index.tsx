@@ -3,7 +3,7 @@ import TextInput from '@/components/text-input'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { Rank, ranksInfo } from '@/tutor'
 import { Link } from 'expo-router'
-import { LucideEdit, LucideUserRoundPlus, LucideUsersRound } from 'lucide-react-native'
+import { LucideEdit, LucideSearch, LucideUserRoundPlus, LucideUsersRound } from 'lucide-react-native'
 import { FlatList, Pressable, ScrollView, View } from 'react-native'
 import { neutral } from 'tailwindcss/colors'
 
@@ -18,7 +18,10 @@ export default function TutorsScreen() {
           <Text className='text-lg'>Добавить преподавателя</Text>
         </Pressable>
       </Link>
-      <TextInput className='m-4' placeholder='Поиск...' />
+      <View className='my-4 mx-6 items-center flex-row'>
+        <TextInput placeholder='Поиск...' className='flex-1' />
+        <LucideSearch strokeWidth={1} className='color-neutral-500 absolute right-5' />
+      </View>
       <View className='flex-row mx-6 mb-4'>
         <LucideUsersRound strokeWidth={1} className='size-5 mr-2 color-neutral-500' />
         <Text>{allTutorsQuery.data?.length ?? '...'}</Text>

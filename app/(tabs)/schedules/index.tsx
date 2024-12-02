@@ -28,15 +28,16 @@ export default function SchedulesScreen() {
       <LucideCalendarSearch strokeWidth={1} className='mt-12 mb-4 size-20 color-neutral-200 mx-auto' />
       <Text className='text-2xl mb-4 font-sans-bold text-center'>Расписания</Text>
       <Text className='font-sans text-center dark:text-neutral-500 mx-4 mb-6'>Ищите расписание своей группы по предметам, кабинетам или преподавателям</Text>
-      <View className='mx-4 mb-4'>
+      <View className='mx-6 mb-4 flex-row items-center'>
         <TextInput
           defaultValue={snap.search}
           onChange={({ nativeEvent: { text } }) => {
             store.search = text.trim()
           }}
           placeholder='СПСТЭД:511-21'
+          className='flex-1'
         />
-        <LucideSearch strokeWidth={1} className='absolute text-neutral-500 size-7 right-4 top-1/2 -translate-y-1/2' />
+        <LucideSearch strokeWidth={1} className='absolute text-neutral-500 right-5' />
       </View>
       <View className='flex-row mx-6 mb-4'>
         <LucideCalendarDays strokeWidth={1} className='size-5 mr-2 color-neutral-500' />

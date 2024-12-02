@@ -1,10 +1,9 @@
 import { ConfigContext, ExpoConfig } from 'expo/config'
 import colors from 'tailwindcss/colors'
-// import { colors } from './src/utils'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'pgu-seichas',
+  name: 'ПГУ Сейчас',
   description: 'Расписания занятий в ПГУ',
   slug: 'pgu-seichas',
   scheme: 'pgu-seichas',
@@ -12,25 +11,32 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   icon: './src/assets/images/icon.png',
   userInterfaceStyle: 'automatic',
-  backgroundColor: colors.neutral[950],
   platforms: ['android'],
-  splash: {
-    backgroundColor: colors.neutral[950],
-  },
   notification: {
     icon: './src/assets/images/icon.png',
   },
   androidStatusBar: {
-    translucent: false,
+    translucent: true,
+  },
+  androidNavigationBar: {
+    backgroundColor: colors.neutral[950],
   },
   android: {
+    package: 'com.piscopancer.pguseichas',
+    backgroundColor: colors.neutral[950],
     adaptiveIcon: {
       foregroundImage: './src/assets/images/icon.png',
       monochromeImage: './src/assets/images/icon.png',
       backgroundColor: colors.neutral[950],
     },
-    backgroundColor: colors.neutral[950],
-    package: 'com.piscopancer.pguseichas',
+    splash: {
+      backgroundColor: colors.neutral[200],
+      image: './src/assets/images/splash-image-for-light.png',
+      dark: {
+        image: './src/assets/images/splash-image-for-dark.png',
+        backgroundColor: colors.neutral[950],
+      },
+    },
   },
   experiments: {
     typedRoutes: true,
@@ -39,21 +45,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-localization',
     '@prisma/react-native',
     'expo-secure-store',
-    [
-      'expo-splash-screen',
-      {
-        image: './src/assets/images/splash.png',
-        resizeMode: 'contain',
-        imageWidth: 250,
-        backgroundColor: colors.neutral[950],
-      },
-    ],
-    // [
-    //   'expo-notifications',
-    //   {
-    //     icon: './src/assets/images/icon.png',
-    //   },
-    // ],
     'expo-router',
     [
       'expo-font',

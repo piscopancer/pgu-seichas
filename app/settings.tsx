@@ -1,9 +1,11 @@
 import { BottomSheet, useSheetRef } from '@/components/bottom-sheet'
+import HeaderButton from '@/components/header-button'
 import SheetTextInput from '@/components/sheet-text-input'
 import Text from '@/components/text'
 import { db } from '@/db'
 import { DeviceStore, useDeviceStore } from '@/device-store'
 import usePublisherStatus from '@/hooks/query/use-publisher-status'
+import { createTestData } from '@/misc/init-test-db'
 import { qc, queryKeys } from '@/query'
 import { cn, colors, objectEntries } from '@/utils'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
@@ -26,22 +28,18 @@ export default function SettingsScreen() {
   const publisherSheet = useSheetRef()
 
   return (
-    <SafeAreaView className='dark:bg-black flex-1 w-full'>
+    <SafeAreaView className='dark:bg-neutral-950 flex-1 w-full'>
       <Pressable onLongPress={() => publisherSheet.current?.expand()} className='absolute size-24 bottom-0 left-0' />
+      <Pressable
+        onLongPress={async () => {
+          await createTestData()
+          ToastAndroid.show('test data created', ToastAndroid.SHORT)
+        }}
+        className='absolute size-24 bottom-0 right-0'
+      />
       <PublisherSheet ref={publisherSheet} />
       <View className='flex flex-row border-b border-neutral-900'>
-        <Pressable
-          android_ripple={{
-            color: colors.neutral[700],
-            radius: 24,
-          }}
-          className='size-16 flex items-center justify-center'
-          onPress={() => {
-            router.back()
-          }}
-        >
-          <LucideArrowLeft strokeWidth={1} className='text-neutral-500 size-8' />
-        </Pressable>
+        <HeaderButton icon={LucideArrowLeft} onPress={() => router.back()} />
       </View>
       <View className='mx-6 mb-6'>
         <Text className='text-2xl mt-8 mb-6'>Расписание</Text>
