@@ -7,7 +7,7 @@ export const queryKeys = {
   tutor: (id: number) => [...queryKeys.tutors, id],
   subjects: ['subjects'],
   subject: (id: number) => [...queryKeys.subjects, id],
-  schedules: (filters?: { search?: string }) => ['schedules', filters],
+  schedules: (filters?: { search?: string }) => (filters ? ['schedules', filters] : ['schedules']),
   schedule: (id: number) => [...queryKeys.schedules(), id],
   publisherStatus: (token: string) => ['publisher-token', token],
 } as const

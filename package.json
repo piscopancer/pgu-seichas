@@ -15,7 +15,8 @@
     "eas-preview": "eas build -p android --profile preview",
     "build-aab": "npx react-native build-android --mode=release",
     "build-apk": "cd android && gradlew assembleRelease",
-    "install-apk": "adb install android/app/build/outputs/apk/release/app-release.apk",
+    "install-release": "adb install android/app/build/outputs/apk/release/app-release.apk",
+    "install-debug": "adb install android/app/build/outputs/apk/debug/app-debug.apk",
     "full": "npm run prebuild && npm run build-apk && npm run install-apk",
     "ios": "expo run:ios"
   },

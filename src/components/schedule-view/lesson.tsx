@@ -115,13 +115,13 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
   if (!tutorsQuery.data || !subjectsQuery.data) return null
 
   return (
-    <View className='flex-row relative border-y border-neutral-800'>
+    <View className='flex-row border-y border-neutral-800'>
       <Text className={cn('absolute -top-2 text-sm dark:text-neutral-400 z-[1]', props.next ? 'dark:text-indigo-400 bg-indigo-500/20 rounded-md px-2 left-4' : 'left-6')}>
         {viewMode === 'position' && props.lessonIndex + 1}
         {viewMode === 'time' && lessonFromTo(props.lessonIndex)}
       </Text>
       {props.mode === 'view' && !props.subject ? (
-        <LucideDot className='color-neutral-700 my-8 mx-auto' />
+        <LucideDot style={{ marginVertical: 29 }} className='color-neutral-700 mx-auto size-6' />
       ) : (
         <>
           <Pressable
@@ -170,7 +170,7 @@ function Lesson(props: LessonProps & LessonAdditionalProps) {
             >
               <View className='relative'>
                 {props.TypeIcon && <props.TypeIcon strokeWidth={1.5} color={typeColor ?? undefined} className='absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 size-5' />}
-                <Text className={cn('text-center text-lg py-2 px-5 line-clamp-1', props.lesson.type ? '' : 'dark:text-neutral-500')}>{props.lesson.type ? capitalizeFirstLetter(lessonTypesInfo[props.lesson.type as LessonType].long) : props.mode === 'view' ? '?' : 'Тип'}</Text>
+                <Text className={cn('text-center text-lg py-2 px-5 line-clamp-1', props.lesson.type ? '' : 'dark:text-neutral-500')}>{props.lesson.type ? capitalizeFirstLetter(lessonTypesInfo[props.lesson.type as LessonType].title) : props.mode === 'view' ? '?' : 'Тип'}</Text>
               </View>
             </Pressable>
           </View>

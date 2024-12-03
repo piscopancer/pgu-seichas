@@ -4,8 +4,9 @@ import { z } from 'zod'
 
 const schemas = {
   publisherToken: z.string({ coerce: true }).nullable().catch(null),
-  lessonViewMode: z.union([z.literal('position'), z.literal('time')]).catch('position'),
   selectedScheduleId: z.number({ coerce: true }).nonnegative().nullable().catch(null),
+  lessonViewMode: z.union([z.literal('position'), z.literal('time')]).catch('position'),
+  scheduleViewMode: z.union([z.literal('list'), z.literal('tabs')]).catch('list'),
 }
 
 type Atom<V> = ReturnType<typeof atom<V>>

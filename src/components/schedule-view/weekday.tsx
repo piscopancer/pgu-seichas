@@ -1,7 +1,8 @@
+import { useDeviceStore } from '@/device-store'
 import { getNextLessonIndexFromNow, maxLessons, Schedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
 import { cn, zonedDate } from '@/utils'
-import { LucideBed, LucideCake, LucideChevronDown, LucideChevronUp, LucideIcon, LucideUtensils } from 'lucide-react-native'
+import { LucideBed, LucideCake, LucideChevronDown, LucideChevronUp, LucideIcon, LucideSoup } from 'lucide-react-native'
 import { Fragment, useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { useSnapshot } from 'valtio'
@@ -72,13 +73,16 @@ function Weekday(props: WeekdayProps) {
   const overlay = getOverlay(!!props.day.holiday, !!props.day.independentWorkDay)
   const [collapsed, setCollapsed] = useState(false)
   const CollapsedIcon = collapsed ? LucideChevronDown : LucideChevronUp
+  const [scheduleView] = useDeviceStore('scheduleViewMode')
 
   return (
     <View>
-      <Pressable onPress={() => setCollapsed((prev) => !prev)}>
-        <CollapsedIcon className='absolute top-1/2 -translate-y-1/2 left-8 size-6 color-neutral-500' />
-        <Text className='px-4 text-2xl text-center my-8 uppercase'>{props.weekday}</Text>
-      </Pressable>
+      {scheduleView === 'list' && (
+        <Pressable onPress={() => setCollapsed((prev) => !prev)}>
+          <CollapsedIcon className='absolute top-1/2 -translate-y-1/2 left-8 size-6 color-neutral-500' />
+          <Text className='px-4 text-2xl text-center my-8 uppercase'>{props.weekday}</Text>
+        </Pressable>
+      )}
       <View className={cn(collapsed ? 'hidden' : '')}>
         {props.mode === 'edit' && (
           <>
@@ -106,7 +110,13 @@ function Weekday(props: WeekdayProps) {
                 <Fragment key={lessonI}>
                   {props.mode === 'edit' && <LessonEdit mode='edit' lesson={props.dayStore.lessons[lessonI]} next={next} dayIndex={props.dayIndex} lessonIndex={lessonI} />}
                   {props.mode === 'view' && <LessonView mode='view' lesson={props.day.lessons[lessonI]} next={next} dayIndex={props.dayIndex} lessonIndex={lessonI} />}
-                  {lessonI === 1 && <LucideUtensils strokeWidth={1} className='color-neutral-500 self-center' />}
+                  {lessonI === 1 && (
+                    <View className='z-[1] justify-center items-center'>
+                      <View className='absolute border border-neutral-800 bg-neutral-950 size-10 items-center justify-center rounded-xl'>
+                        <LucideSoup strokeWidth={1} className='color-neutral-500 size-6' />
+                      </View>
+                    </View>
+                  )}
                 </Fragment>
               )
             })}

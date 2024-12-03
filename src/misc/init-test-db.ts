@@ -1,13 +1,9 @@
 // import { PrismaClient } from '@prisma/client'
+import { LessonType } from '@/lesson'
 import { maxLessons } from '@/schedule'
 import { fillArray } from '@/utils'
 import { db } from '../db'
 import { ranks } from '../tutor'
-
-// desktop db
-// const db = new PrismaClient()
-
-type LessonType = null | 'practical' | 'seminar' | 'lecture'
 
 export async function createTestData() {
   const tutors = await createTutors()
@@ -17,7 +13,7 @@ export async function createTestData() {
   console.log('✅ subjects created')
   const [lebedeva_angl, brodskaya_kit, liubogoshev_kit, nastaeva_angl, osadchiy_phis, kerme_angl, savtiriova_kit, sarkisyan_ang, karatseva_angl, saakova_angl, savchenko_ling] = subjects
   const schedule = await createSchedule()
-  const days = await createDays(schedule.id)
+  await createDays(schedule.id)
   await createTokens()
 
   //
@@ -350,10 +346,3 @@ export async function createTestData() {
     })
   }
 }
-
-async function run() {
-  await createTestData()
-  console.log('✅')
-}
-
-run()

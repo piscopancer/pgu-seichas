@@ -1,14 +1,16 @@
 import { db } from '@/db'
 import { queryKeys } from '@/query'
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 
 export async function querySubjects() {
   return db.subject.findMany()
 }
 
-export default function useSubjectsQuery() {
-  return useQuery({
-    queryKey: queryKeys.subjects,
-    queryFn: querySubjects,
-  })
+const subjectsQueryOptions = queryOptions({
+  queryKey: queryKeys.subjects,
+  queryFn: querySubjects,
+})
+
+export default function useSubjectsQuery(options?: Omit<typeof subjectsQueryOptions, 'queryKey' | 'queryFn'>) {
+  return useQuery({ ...subjectsQueryOptions, ...(options ?? {}) })
 }

@@ -13,18 +13,72 @@ import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useRouter } from 'expo-router'
 import { LucideArrowLeft, LucideExternalLink } from 'lucide-react-native'
-import { forwardRef, useRef } from 'react'
+import { forwardRef, ReactNode, useRef } from 'react'
 import { Pressable, ToastAndroid, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+type LessonView = DeviceStore['lessonViewMode']
+
 const lessonViewOptions = {
-  position: { text: 'Номер пары' },
-  time: { text: 'Время пары' },
-} satisfies Record<DeviceStore['lessonViewMode'], { text: string }>
+  position: {
+    text: 'Номер пары',
+    preview: ({ selected }) => <Text className='my-3 text-center text-lg'>1</Text>,
+  },
+  time: {
+    text: 'Время пары',
+    preview: ({ selected }) => <Text className='my-3 text-center text-lg'>8:30 - 10:10</Text>,
+  },
+} satisfies Record<LessonView, { text: string; preview: (props: { selected: boolean }) => ReactNode }>
+
+type ScheduleView = DeviceStore['scheduleViewMode']
+
+const scheduleViewOptions = {
+  list: {
+    text: 'Список',
+    preview: ({ selected }) => (
+      <View className='items-center justify-center h-32'>
+        <View className='gap-1 items-center mb-4 w-1/3'>
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+        </View>
+        <View className='gap-1 items-center w-1/3'>
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+        </View>
+      </View>
+    ),
+  },
+  tabs: {
+    text: 'Вкладки',
+    preview: ({ selected }) => (
+      <View className='h-32 items-center justify-center'>
+        <View className='gap-1 items-center mb-3 w-1/3'>
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+        </View>
+        <View className='flex-row gap-1.5 p-2 rounded-xl bg-neutral-800'>
+          <View className='size-6 rounded-md bg-neutral-500' />
+          <View className='size-6 rounded-md bg-neutral-600' />
+          <View className='size-6 rounded-md bg-neutral-600' />
+        </View>
+      </View>
+    ),
+  },
+} satisfies Record<ScheduleView, { text: string; preview: (props: { selected: boolean }) => ReactNode }>
 
 export default function SettingsScreen() {
   const router = useRouter()
   const [lessonView, setLessonView] = useDeviceStore('lessonViewMode')
+  const [scheduleView, setScheduleView] = useDeviceStore('scheduleViewMode')
   const publisherSheet = useSheetRef()
 
   return (
@@ -42,6 +96,49 @@ export default function SettingsScreen() {
         <HeaderButton icon={LucideArrowLeft} onPress={() => router.back()} />
       </View>
       <View className='mx-6 mb-6'>
+        <Text className='text-2xl mt-8 mb-6'>Внешний вид</Text>
+        <Text className='text-lg mb-2'>Пара</Text>
+        <View className='flex-row gap-2 mb-6'>
+          {objectEntries(lessonViewOptions).map(([option, { text, preview: Preview }]) => (
+            <Pressable
+              key={option}
+              android_ripple={{
+                color: colors.neutral[700],
+                foreground: true,
+              }}
+              disabled={lessonView === option}
+              onPress={() => setLessonView(option)}
+              className={cn('flex-1 rounded-md')}
+            >
+              <View className={cn('rounded-t-md mb-px', option === lessonView ? 'bg-neutral-850' : 'bg-neutral-900')}>
+                <Preview selected={option === lessonView} />
+              </View>
+              <Text className={cn('text-center text-lg py-1 rounded-b-md', lessonView === option ? 'bg-neutral-850' : 'bg-neutral-900')}>{text}</Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text className='text-lg mb-2'>Расписание</Text>
+        <View className='flex-row gap-2 mb-6'>
+          {objectEntries(scheduleViewOptions).map(([option, { text, preview: Preview }]) => (
+            <Pressable
+              key={option}
+              android_ripple={{
+                color: colors.neutral[700],
+                foreground: true,
+              }}
+              disabled={scheduleView === option}
+              onPress={() => setScheduleView(option)}
+              className={cn('flex-1 rounded-md')}
+            >
+              <View className={cn('rounded-t-md mb-px', option === scheduleView ? 'bg-neutral-850' : 'bg-neutral-900')}>
+                <Preview selected={option === scheduleView} />
+              </View>
+              <Text className={cn('text-center text-lg py-1 rounded-b-md', scheduleView === option ? 'bg-neutral-850' : 'bg-neutral-900')}>{text}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+      {/* <View className='mx-6 mb-6'>
         <Text className='text-2xl mt-8 mb-6'>Расписание</Text>
         <Text className='text-lg mb-2'>Показывать</Text>
         <View className='flex-row gap-2 mb-6'>
@@ -51,7 +148,7 @@ export default function SettingsScreen() {
             </Pressable>
           ))}
         </View>
-      </View>
+      </View> */}
       <View className='mx-6'>
         <Text className='text-2xl mb-6'>Поддержка</Text>
         <Link href={'http://t.me/piscopancer'} asChild>
@@ -61,44 +158,6 @@ export default function SettingsScreen() {
           </Pressable>
         </Link>
       </View>
-      {/* <Text
-        onPress={() =>
-          db.publisherToken
-            .createMany({
-              data: [
-                {
-                  value: 'annarob_1234',
-                },
-                {
-                  value: 'igorbistr_0109',
-                },
-              ],
-            })
-            .then((res) => console.log(JSON.stringify(res, null, 2)))
-        }
-      >
-        create
-      </Text>
-      <Text
-        onPress={() =>
-          db.publisherToken
-            .updateMany({
-              data: {
-                activated: false,
-              },
-            })
-            .then((res) => console.log(JSON.stringify(res, null, 2)))
-        }
-      >
-        RESET
-      </Text>
-      <Text
-        onPress={() => {
-          db.publisherToken.findMany().then((t) => console.log(JSON.stringify(t, null, 2)))
-        }}
-      >
-        query
-      </Text> */}
     </SafeAreaView>
   )
 }

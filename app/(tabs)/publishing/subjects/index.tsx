@@ -4,7 +4,7 @@ import { db } from '@/db'
 import { queryKeys } from '@/query'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
-import { LucideBookCopy, LucideBookPlus, LucideEdit, LucideSearch } from 'lucide-react-native'
+import { LucideBookCopy, LucideBookPlus, LucideEdit3, LucideSearch } from 'lucide-react-native'
 import { FlatList, Pressable, ScrollView, View } from 'react-native'
 import { neutral } from 'tailwindcss/colors'
 
@@ -59,7 +59,7 @@ export default function SubjectsScreen() {
                 <Text className='line-clamp-1 mr-auto text-lg'>{subject.name}</Text>
                 <Text className='dark:text-neutral-500 text-lg'>{subject.tutor ? `${subject.tutor.surname} ${subject.tutor.name[0]}. ${subject.tutor.middlename[0]}.` : 'Преподаватель не указан'}</Text>
               </View>
-              <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />
+              <LucideEdit3 strokeWidth={1} className='color-neutral-500 size-6' />
             </Pressable>
           </Link>
         )}

@@ -2,7 +2,7 @@ import HeaderButton from '@/components/header-button'
 import usePublisherStatus from '@/hooks/query/use-publisher-status'
 import { cn, colors } from '@/utils'
 import { Href, Link, Stack, useSegments } from 'expo-router'
-import { LucideCalendarSearch, LucideEdit, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
+import { LucideCalendarSearch, LucideEdit3, LucideHome, LucideIcon, LucideSettings } from 'lucide-react-native'
 import { Pressable, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -30,7 +30,7 @@ export default function TabLayout() {
       <View className='h-16 border-t border-neutral-900 flex flex-row'>
         <TabLink segment='' href={'/(tabs)'} icon={LucideHome} />
         <TabLink segment='schedules' href={'/(tabs)/schedules'} icon={LucideCalendarSearch} />
-        {publisher && <TabLink segment='publishing' href='/(tabs)/publishing' icon={LucideEdit} />}
+        {publisher && <TabLink segment='publishing' href='/(tabs)/publishing' icon={LucideEdit3} />}
       </View>
     </SafeAreaView>
   )

@@ -1,41 +1,30 @@
 import { db } from '@/db'
 import { useDeviceStore } from '@/device-store'
-import useSubjectsQuery from '@/hooks/query/use-subjects'
-import useTutorsQuery from '@/hooks/query/use-tutors'
-import { lessonTypes, lessonTypesInfo } from '@/lesson'
 import { qc, queryKeys } from '@/query'
-import { Schedule, updateSchedule, weekdays } from '@/schedule'
+import { updateSchedule } from '@/schedule'
 import { ScheduleStore } from '@/store/schedule'
-import { capitalizeFirstLetter, colors } from '@/utils'
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
+import { cn, colors } from '@/utils'
+import { Portal, PortalHost } from '@gorhom/portal'
 import { Prisma } from '@prisma/client'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { LucideCalendarCheck2, LucideCalendarPlus } from 'lucide-react-native'
 import { useRef } from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
-import { BottomSheet, useSheetRef } from '../bottom-sheet'
+import { useSheetRef } from '../bottom-sheet'
 import Text from '../text'
 import TextInput from '../text-input'
-import { scheduleContext, SheetOpenFor } from './shared'
-import { WeekdayEdit, WeekdayView } from './weekday'
-
-type ScheduleViewProps =
-  | {
-      mode: 'edit'
-      schedule: ScheduleStore
-    }
-  | {
-      mode: 'view'
-      schedule: Schedule
-    }
+import DeleteSheet from './delete-sheet'
+import LessonTypeSheet from './lesson-type-sheet'
+import { scheduleContext, ScheduleViewProps, SheetOpenFor } from './shared'
+import SubjectSheet from './subject-sheet'
+import WeekdaysList from './weekdays-list'
+import WeekdaysTabs from './weekdays-tabs'
 
 export function ScheduleViewEdit({ schedule }: ScheduleViewProps & { mode: 'edit' }) {
   const subjectSheet = useSheetRef()
   const lessonTypeSheet = useSheetRef()
   const sheetOpenFor = useRef<SheetOpenFor>()
-  const subjectsQuery = useSubjectsQuery()
-  const tutorsQuery = useTutorsQuery()
 
   return (
     <scheduleContext.Provider
@@ -47,83 +36,8 @@ export function ScheduleViewEdit({ schedule }: ScheduleViewProps & { mode: 'edit
       }}
     >
       <ScheduleView mode='edit' schedule={schedule} />
-      {/* subject sheet */}
-      <BottomSheet ref={subjectSheet} onClose={() => (sheetOpenFor.current = undefined)}>
-        <Pressable
-          android_ripple={{ color: colors.neutral[700] }}
-          onPress={() => {
-            if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-              schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = null
-              subjectSheet.current?.close()
-              sheetOpenFor.current = undefined
-            }
-          }}
-          className='px-6 py-4'
-        >
-          <Text className='text-lg'>Предмет не указан</Text>
-        </Pressable>
-        <View className='border-b border-neutral-800 mx-6' />
-        <BottomSheetFlatList
-          scrollEnabled
-          data={subjectsQuery.data ?? []}
-          renderItem={(subject) => {
-            const tutor = tutorsQuery.data?.find((t) => t.id === subject.item.tutorId)
-
-            return (
-              <Pressable
-                className='px-6 py-4'
-                android_ripple={{ color: colors.neutral[700] }}
-                onPress={() => {
-                  if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-                    schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = subject.item.id
-                    sheetOpenFor.current = undefined
-                    subjectSheet.current?.close()
-                  }
-                }}
-              >
-                <Text className='mb-1'>{subject.item.name}</Text>
-                <Text className='dark:text-neutral-500'>{tutor ? `${tutor.surname} ${tutor.name} ${tutor.middlename}` : 'Преп. не указан'}</Text>
-              </Pressable>
-            )
-          }}
-        />
-      </BottomSheet>
-      {/* lesson type sheet */}
-      <BottomSheet ref={lessonTypeSheet} onClose={() => (sheetOpenFor.current = undefined)}>
-        <Pressable
-          onPress={() => {
-            if (sheetOpenFor.current) {
-              schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = null
-              sheetOpenFor.current = undefined
-              lessonTypeSheet.current?.close()
-            }
-          }}
-          className='px-4 py-4 border-b border-neutral-800'
-          android_ripple={{ color: colors.neutral[700] }}
-        >
-          <Text className='text-lg dark:text-neutral-500'>Тип не указан</Text>
-        </Pressable>
-        <BottomSheetFlatList
-          data={lessonTypes}
-          renderItem={({ item: lessonType }) => {
-            return (
-              <Pressable
-                onPress={() => {
-                  if (sheetOpenFor.current) {
-                    schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = lessonType
-                    sheetOpenFor.current = undefined
-                    lessonTypeSheet.current?.close()
-                  }
-                }}
-                className='px-4 py-4'
-                android_ripple={{ color: colors.neutral[700] }}
-              >
-                <Text className='text-lg'>{capitalizeFirstLetter(lessonTypesInfo[lessonType].long)}</Text>
-              </Pressable>
-            )
-          }}
-        />
-      </BottomSheet>
+      <SubjectSheet schedule={schedule} ref={subjectSheet} />
+      <LessonTypeSheet schedule={schedule} ref={lessonTypeSheet} />
     </scheduleContext.Provider>
   )
 }
@@ -145,7 +59,9 @@ export function ScheduleViewView({ schedule }: ScheduleViewProps & { mode: 'view
 
 function ScheduleView(props: ScheduleViewProps) {
   const [selectedScheduleId, setSelectedScheduleId] = useDeviceStore('selectedScheduleId')
+  const [scheduleView] = useDeviceStore('scheduleViewMode')
   const router = useRouter()
+  const deleteSheetRef = useSheetRef()
 
   function onSelectPress(id: number) {
     setSelectedScheduleId(id)
@@ -154,6 +70,8 @@ function ScheduleView(props: ScheduleViewProps) {
 
   return (
     <>
+      <PortalHost name='weekdays-tabs' />
+      <PortalHost name='select-schedule' />
       <ScrollView>
         {props.mode === 'edit' ? (
           <>
@@ -161,21 +79,30 @@ function ScheduleView(props: ScheduleViewProps) {
             <TextInput editable={props.mode === 'edit'} defaultValue={props.schedule.name} onChange={(e) => (props.schedule.name = e.nativeEvent.text.trim())} placeholder='ПИП:...' className='mb-8 mx-4' />
           </>
         ) : (
-          <Text className='text-2xl text-center mt-12 mb-4 font-sans-bold'>{props.schedule.name}</Text>
+          <Text className={cn('text-center', scheduleView === 'list' ? 'text-2xl mt-12 mb-4 font-sans-bold' : 'my-4 dark:text-neutral-500')}>{props.schedule.name}</Text>
         )}
         <View className='mb-40'>
-          {props.mode === 'edit' && weekdays.map((weekday, i) => <WeekdayEdit mode={props.mode} day={props.schedule.days[i]} key={i} weekday={weekday} dayIndex={i} />)}
-          {/*  */}
-          {props.mode === 'view' && weekdays.map((weekday, i) => <WeekdayView mode={props.mode} day={props.schedule.days[i]} key={i} weekday={weekday} dayIndex={i} />)}
+          <View className='mb-6'>{scheduleView === 'list' ? <WeekdaysList {...props} /> : <WeekdaysTabs {...props} />}</View>
+          {props.mode === 'edit' && (
+            <>
+              <View className='border-b border-dashed border-neutral-800 mx-6 mb-6' />
+              <Pressable android_ripple={{ color: colors.neutral[800] }} onPress={() => deleteSheetRef.current?.snapToIndex(0)} className='mx-6 py-4 mb-12 px-6 rounded-md border border-neutral-800'>
+                <Text className='text-center text-lg'>Удалить</Text>
+              </Pressable>
+              <DeleteSheet ref={deleteSheetRef} schedule={props.schedule} />
+            </>
+          )}
         </View>
       </ScrollView>
       {props.mode === 'edit' && (props.schedule.id === undefined ? <CreateSchedulePressable scheduleStore={props.schedule} /> : <UpdateSchedulePressable id={props.schedule.id} scheduleStore={props.schedule} />)}
       {props.mode === 'view' && props.schedule.id !== selectedScheduleId && (
-        <View className='absolute bottom-4 right-0 w-full'>
-          <Pressable android_ripple={{ color: colors.indigo[300] }} onPress={() => onSelectPress(props.schedule.id)} className='w-1/2 mx-auto bg-indigo-500 rounded-md py-3'>
-            <Text className='text-lg font-sans-bold text-center'>Выбрать</Text>
-          </Pressable>
-        </View>
+        <Portal hostName='select-schedule'>
+          <View className='absolute bottom-28 right-0 w-full z-[1]'>
+            <Pressable android_ripple={{ color: colors.indigo[300] }} onPress={() => onSelectPress(props.schedule.id)} className='w-1/2 mx-auto bg-indigo-500 rounded-md py-3'>
+              <Text className='text-lg font-sans-bold text-center'>Выбрать</Text>
+            </Pressable>
+          </View>
+        </Portal>
       )}
     </>
   )

@@ -4,42 +4,42 @@ import { db } from './db'
 import { ScheduleStore } from './store/schedule'
 import { getDayOfWeekIndex } from './utils'
 
-export const weekdays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'] as const
+export const weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'] as const
 export const maxLessons = 5
 
 export function lessonFromTo(index: number): string {
   return ['8:30 - 10:00', '10:10 - 11:40', '12:20 - 13:50', '14:00 - 15:30', '15:40 - 17:10'][index]
 }
 
-type Lesson = Prisma.LessonSelect
+export type ScheduleViewMode = 'view' | 'edit'
 
 type LessonsTimestamps = {
   from: { h: number; m: number }
   to: { h: number; m: number }
 }[]
 
-const hOffset = 3
+const pyatigorskHourOffset = 3
 
 const lessonsTimestamps: LessonsTimestamps = [
   {
-    from: { h: 8 - hOffset, m: 30 },
-    to: { h: 10 - hOffset, m: 0 },
+    from: { h: 8 - pyatigorskHourOffset, m: 30 },
+    to: { h: 10 - pyatigorskHourOffset, m: 0 },
   },
   {
-    from: { h: 10 - hOffset, m: 10 },
-    to: { h: 11 - hOffset, m: 40 },
+    from: { h: 10 - pyatigorskHourOffset, m: 10 },
+    to: { h: 11 - pyatigorskHourOffset, m: 40 },
   },
   {
-    from: { h: 12 - hOffset, m: 20 },
-    to: { h: 13 - hOffset, m: 50 },
+    from: { h: 12 - pyatigorskHourOffset, m: 20 },
+    to: { h: 13 - pyatigorskHourOffset, m: 50 },
   },
   {
-    from: { h: 14 - hOffset, m: 0 },
-    to: { h: 15 - hOffset, m: 30 },
+    from: { h: 14 - pyatigorskHourOffset, m: 0 },
+    to: { h: 15 - pyatigorskHourOffset, m: 30 },
   },
   {
-    from: { h: 15 - hOffset, m: 40 },
-    to: { h: 17 - hOffset, m: 10 },
+    from: { h: 15 - pyatigorskHourOffset, m: 40 },
+    to: { h: 17 - pyatigorskHourOffset, m: 10 },
   },
 ]
 

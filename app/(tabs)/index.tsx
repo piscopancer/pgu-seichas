@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { formatDistanceStrict } from 'date-fns'
 import { ru } from 'date-fns/locale/ru'
 import { Link } from 'expo-router'
-import { LucideCalendarCheck2, LucideCalendarOff, LucideDoorOpen, LucideEllipsisVertical, LucideHourglass } from 'lucide-react-native'
+import { LucideCalendarCheck2, LucideCalendarOff, LucideDoorOpen, LucideHourglass } from 'lucide-react-native'
 import { useState } from 'react'
 import { ActivityIndicator, Pressable, View, ViewProps } from 'react-native'
 
@@ -26,12 +26,12 @@ export default function HomeScreen() {
   return (
     <View className='flex-1'>
       <Text className='text-center dark:text-neutral-500 mt-6 mb-24'>ПГУ Сейчас • Расписание</Text>
-      <Pressable onPress={() => setActive((prev) => !prev)} className={cn('border-8 p-1 rounded-full w-56 mx-auto', active ? 'bg-indigo-500 border-indigo-500/30' : 'bg-neutral-850 border-neutral-800')}>
+      {/* <Pressable onPress={() => setActive((prev) => !prev)} className={cn('border-8 p-1 rounded-full w-56 mx-auto', active ? 'bg-indigo-500 border-indigo-500/30' : 'bg-neutral-850 border-neutral-800')}>
         <View className={cn('border h-24 rounded-full items-center flex-row px-6', active ? 'justify-end border-indigo-200' : 'justify-start border-neutral-950')}>
           <StateIcon strokeWidth={1} className={cn('size-12', active ? 'color-indigo-100' : 'color-neutral-500')} />
         </View>
       </Pressable>
-      <LucideEllipsisVertical className={cn('self-center my-6 size-12', active ? 'color-indigo-500' : 'color-neutral-800')} />
+      <LucideEllipsisVertical className={cn('self-center my-6 size-12', active ? 'color-indigo-500' : 'color-neutral-800')} /> */}
       {scheduleQuery.data ? (
         <SelectedSchedule schedule={scheduleQuery.data} className='mt-3' />
       ) : (
@@ -78,9 +78,9 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
     <View {...props} className={cn(props.className)}>
       <Link asChild href={`/(tabs)/schedules/${schedule.id}`}>
         <Pressable>
-          <View className='bg-neutral-850 px-4 rounded-3xl z-[1]'>
-            <View className='mx-auto -translate-y-4 rounded-full bg-neutral-850 max-w-[75%] py-2 px-4'>
-              <Text className='line-clamp-1 max-w-64 align-middle'>{schedule.name}</Text>
+          <View className='bg-neutral-900 px-4 rounded-3xl pt-7'>
+            <View className='self-center -translate-y-4 rounded-full bg-neutral-900 max-w-[75%] py-2 px-4 absolute'>
+              <Text className='dark:text-neutral-500 line-clamp-1 max-w-64 align-middle'>{schedule.name}</Text>
             </View>
             {nextLesson ? (
               <>
@@ -88,7 +88,7 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
                   {nextSubject ? (
                     <>
                       <Text className='text-xl text-center'>{nextSubject.name}</Text>
-                      <Text className='dark:text-neutral-400 text-center'>{nextSubjectTutor ? `${nextSubjectTutor.surname} ${nextSubjectTutor.name} ${nextSubjectTutor.middlename}` : 'Преподаватель не указан'}</Text>
+                      <Text className='dark:text-neutral-500 text-center'>{nextSubjectTutor ? `${nextSubjectTutor.surname} ${nextSubjectTutor.name} ${nextSubjectTutor.middlename}` : 'Преподаватель не указан'}</Text>
                     </>
                   ) : (
                     <>
@@ -109,11 +109,11 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
               </>
             ) : (
               <View>
-                <Text className='text-center'>-</Text>
+                <Text className='text-center'> </Text>
               </View>
             )}
           </View>
-          <View className='border-b border-x border-neutral-800 pt-10 pb-4 -mt-6 rounded-b-3xl px-4'>
+          <View className='border-b border-x border-neutral-900 pt-10 pb-4 -mt-6 rounded-b-3xl px-4'>
             {nextLessonPosition ? (
               schedule.days[nextLessonPosition.dayIndex].lessons.map((lesson, i) => {
                 const subject = subjectsQuery.data.find((s) => s.id === lesson.subjectId)
@@ -121,14 +121,14 @@ function SelectedSchedule({ schedule, ...props }: SelectedScheduleProps) {
 
                 return (
                   <View key={lesson.id} className='flex-row items-center'>
-                    <Text className={cn('flex-1 line-clamp-1', next ? 'dark:text-indigo-500' : subject ? 'dark:text-neutral-200' : 'dark:text-neutral-500')}>{subject ? subject.name : '-'}</Text>
+                    <Text className={cn('flex-1 line-clamp-1', next ? 'dark:text-indigo-500' : subject ? 'dark:text-neutral-200' : 'dark:text-neutral-500')}>{subject ? subject.name : ' '}</Text>
                     {lesson.place && <Text className={cn('font-mono flex-1 text-right', next ? 'dark:text-indigo-500' : 'dark:text-neutral-500 ')}>{lesson.place}</Text>}
                   </View>
                 )
               })
             ) : (
               <View>
-                <Text>-</Text>
+                <Text> </Text>
               </View>
             )}
           </View>

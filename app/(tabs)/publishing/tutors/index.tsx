@@ -3,7 +3,7 @@ import TextInput from '@/components/text-input'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { Rank, ranksInfo } from '@/tutor'
 import { Link } from 'expo-router'
-import { LucideEdit, LucideSearch, LucideUserRoundPlus, LucideUsersRound } from 'lucide-react-native'
+import { LucideEdit3, LucideSearch, LucideUserRoundPlus, LucideUsersRound } from 'lucide-react-native'
 import { FlatList, Pressable, ScrollView, View } from 'react-native'
 import { neutral } from 'tailwindcss/colors'
 
@@ -45,7 +45,7 @@ export default function TutorsScreen() {
                   <Text className='align-middle px-2 py-1 border border-neutral-700 rounded-md'>{tutor._count.subjects} предм.</Text>
                 </View>
               </View>
-              <LucideEdit strokeWidth={1} className='color-neutral-500 size-6' />
+              <LucideEdit3 strokeWidth={1} className='color-neutral-500 size-6' />
             </Pressable>
           </Link>
         )}
