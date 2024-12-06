@@ -85,70 +85,70 @@ export function getMinsToNextLesson(nextLessonIndex: number): number {
   return minutesRemaining
 }
 
-export async function querySchedules(filters?: { search?: string }) {
+export async function querySchedules() {
   return db.schedule.findMany({
-    ...(filters && filters.search
-      ? {
-          where: {
-            OR: [
-              {
-                name: {
-                  contains: filters.search,
-                },
-              },
-              {
-                days: {
-                  some: {
-                    lessons: {
-                      some: {
-                        OR: [
-                          {
-                            place: {
-                              contains: filters.search,
-                            },
-                          },
-                          {
-                            subject: {
-                              OR: [
-                                {
-                                  name: {
-                                    contains: filters.search,
-                                  },
-                                },
-                                {
-                                  tutor: {
-                                    OR: [
-                                      {
-                                        name: {
-                                          contains: filters.search,
-                                        },
-                                      },
-                                      {
-                                        surname: {
-                                          contains: filters.search,
-                                        },
-                                      },
-                                      {
-                                        middlename: {
-                                          contains: filters.search,
-                                        },
-                                      },
-                                    ],
-                                  },
-                                },
-                              ],
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        }
-      : {}),
+    // ...(filters && filters.search
+    //   ? {
+    //       where: {
+    //         OR: [
+    //           {
+    //             name: {
+    //               contains: filters.search,
+    //             },
+    //           },
+    //           {
+    //             days: {
+    //               some: {
+    //                 lessons: {
+    //                   some: {
+    //                     OR: [
+    //                       {
+    //                         place: {
+    //                           contains: filters.search,
+    //                         },
+    //                       },
+    //                       {
+    //                         subject: {
+    //                           OR: [
+    //                             {
+    //                               name: {
+    //                                 contains: filters.search,
+    //                               },
+    //                             },
+    //                             {
+    //                               tutor: {
+    //                                 OR: [
+    //                                   {
+    //                                     name: {
+    //                                       contains: filters.search,
+    //                                     },
+    //                                   },
+    //                                   {
+    //                                     surname: {
+    //                                       contains: filters.search,
+    //                                     },
+    //                                   },
+    //                                   {
+    //                                     middlename: {
+    //                                       contains: filters.search,
+    //                                     },
+    //                                   },
+    //                                 ],
+    //                               },
+    //                             },
+    //                           ],
+    //                         },
+    //                       },
+    //                     ],
+    //                   },
+    //                 },
+    //               },
+    //             },
+    //           },
+    //         ],
+    //       },
+    //     }
+    //   : {}),
     select: {
       id: true,
       name: true,
@@ -170,6 +170,17 @@ export async function querySchedules(filters?: { search?: string }) {
       },
       days: {
         select: {
+          lessons: {
+            select: {
+              place: true,
+              subject: {
+                select: {
+                  id: true,
+                  tutorId: true,
+                },
+              },
+            },
+          },
           _count: {
             select: {
               lessons: {
