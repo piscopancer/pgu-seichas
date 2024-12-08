@@ -1,5 +1,5 @@
 import { Schedule, ScheduleViewMode } from '@/schedule'
-import { ScheduleStore } from '@/store/schedule'
+import { ScheduleStore, ScheduleStoreApi } from '@/store/schedule'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { createContext, MutableRefObject } from 'react'
 
@@ -10,14 +10,15 @@ export const scheduleContext = createContext<{
   sheetOpenFor: MutableRefObject<SheetOpenFor | undefined> | null
   lessonTypeSheet: MutableRefObject<BottomSheetMethods | null> | null
   subjectSheet: MutableRefObject<BottomSheetMethods | null> | null
+  scheduleStore: ScheduleStoreApi | null
 }>(null!)
 
 export type ScheduleViewProps =
   | {
       mode: 'edit'
-      schedule: ScheduleStore
+      schedule: () => ScheduleStore['schedule']
     }
   | {
       mode: 'view'
-      schedule: Schedule
+      schedule: () => Schedule
     }

@@ -8,6 +8,7 @@ import { db } from '@/db'
 import { qc, queryKeys } from '@/query'
 import { Rank, ranksInfo, tutorSchema } from '@/tutor'
 import { capitalizeFirstLetter, cn, colors } from '@/utils'
+import { store } from '@davstack/store'
 import { BottomSheetView } from '@gorhom/bottom-sheet'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
 import { Prisma } from '@prisma/client'
@@ -16,7 +17,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { forwardRef, useEffect, useState } from 'react'
 import { Pressable, ScrollView, ToastAndroid, View } from 'react-native'
 import { indigo } from 'tailwindcss/colors'
-import { proxy, useSnapshot } from 'valtio'
 
 async function queryTutor(id: number) {
   return db.tutor.findFirst({
@@ -26,7 +26,7 @@ async function queryTutor(id: number) {
   })
 }
 
-const changedStore = proxy<Partial<{ name: string; surname: string; middlename: string; rank: Rank | null }>>({
+const changedStore = store<Partial<{ name: string; surname: string; middlename: string; rank: Rank | null }>>({
   name: undefined,
   surname: undefined,
   middlename: undefined,
@@ -50,7 +50,7 @@ export default function TutorScreen() {
       router.back()
     },
   })
-  const changedSnap = useSnapshot(changedStore)
+  const changedSnap = changedStore.use()
   const rankSheetRef = useSheetRef()
   const confirmDeleteSheetRef = useSheetRef()
 
@@ -76,11 +76,38 @@ export default function TutorScreen() {
       {tutorQuery.data ? (
         <>
           <Text className='mt-12 mb-2 ml-11 dark:text-neutral-500'>Фамилия</Text>
-          <TextInput defaultValue={tutorQuery.data.surname} placeholder={tutorQuery.data.surname} className='mb-4 mx-6' onChangeText={(text) => (changedStore.surname = text === tutorQuery.data?.surname ? undefined : text)} />
+          <TextInput
+            defaultValue={tutorQuery.data.surname}
+            placeholder={tutorQuery.data.surname}
+            className='mb-4 mx-6'
+            onChangeText={(text) => {
+              changedStore.assign({
+                surname: text === tutorQuery.data?.surname ? undefined : text,
+              })
+            }}
+          />
           <Text className='mb-2 ml-11 dark:text-neutral-500'>Имя</Text>
-          <TextInput defaultValue={tutorQuery.data.name} placeholder={tutorQuery.data.name} onChangeText={(text) => (changedStore.name = text === tutorQuery.data?.name ? undefined : text)} className='mb-4 mx-6' />
+          <TextInput
+            defaultValue={tutorQuery.data.name}
+            placeholder={tutorQuery.data.name}
+            onChangeText={(text) => {
+              changedStore.assign({
+                name: text === tutorQuery.data?.name ? undefined : text,
+              })
+            }}
+            className='mb-4 mx-6'
+          />
           <Text className='mb-2 ml-11 dark:text-neutral-500'>Отчество</Text>
-          <TextInput defaultValue={tutorQuery.data.middlename} placeholder={tutorQuery.data.middlename} onChangeText={(text) => (changedStore.middlename = text === tutorQuery.data?.middlename ? undefined : text)} className='mb-4 mx-6' />
+          <TextInput
+            defaultValue={tutorQuery.data.middlename}
+            placeholder={tutorQuery.data.middlename}
+            onChangeText={(text) => {
+              changedStore.assign({
+                middlename: text === tutorQuery.data?.middlename ? undefined : text,
+              })
+            }}
+            className='mb-4 mx-6'
+          />
           <Text className='mb-2 ml-11 dark:text-neutral-500'>Должность</Text>
           {/*  */}
           <Pressable onPress={() => rankSheetRef.current?.expand()} className='border rounded-md border-neutral-800 px-5 py-4 mx-6 mb-8'>
@@ -89,7 +116,9 @@ export default function TutorScreen() {
           <TutorRankSheet
             ref={rankSheetRef}
             onSelect={(rank) => {
-              changedStore.rank = (tutorQuery.data!.rank as Rank | null) === rank ? undefined : rank
+              changedStore.assign({
+                rank: (tutorQuery.data!.rank as Rank | null) === rank ? undefined : rank,
+              })
             }}
           />
           {/* <Pressable
@@ -111,11 +140,11 @@ export default function TutorScreen() {
             onPress={() => {
               if (!tutorQuery.data) return
               const tutorParseRes = tutorSchema.safeParse({
-                name: changedStore.name ?? tutorQuery.data.name,
-                surname: changedStore.surname ?? tutorQuery.data.surname,
-                middlename: changedStore.middlename ?? tutorQuery.data.middlename,
-                rank: changedStore.rank !== undefined ? changedStore.rank : (tutorQuery.data.rank as Rank | null),
-              } satisfies typeof changedStore)
+                name: changedStore.name?.get() ?? tutorQuery.data.name,
+                surname: changedStore.surname?.get() ?? tutorQuery.data.surname,
+                middlename: changedStore.middlename?.get() ?? tutorQuery.data.middlename,
+                rank: changedStore.rank?.get() !== undefined ? changedStore.rank : (tutorQuery.data.rank as Rank | null),
+              } satisfies ReturnType<typeof changedStore.get>)
               if (tutorParseRes.success) {
                 updateTutorMutation.mutate({
                   where: {

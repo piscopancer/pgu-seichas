@@ -1,8 +1,8 @@
 import { ScheduleViewEdit } from '@/components/schedule-view/schedule-view'
 import { queryKeys } from '@/query'
 import { querySchedule } from '@/schedule'
-import { defaultCommonScheduleStore, updateScheduleStore } from '@/store/schedule'
-import { assignObject, colors } from '@/utils'
+import { updateScheduleStore } from '@/store/schedule'
+import { colors } from '@/utils'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect } from 'react'
@@ -17,19 +17,21 @@ export default function UpdateScheduleScreen() {
 
   useEffect(() => {
     if (scheduleQuery.data) {
-      assignObject(updateScheduleStore, scheduleQuery.data)
-      console.log('😁😁😁')
-      console.log(JSON.stringify(scheduleQuery.data.days[0], null, 2))
+      updateScheduleStore.schedule.set(scheduleQuery.data)
+      // assignObject(updateScheduleStore, scheduleQuery.data)
+      // console.log('😁😁😁')
+      // console.log(JSON.stringify(scheduleQuery.data.days[0], null, 2))
     }
   }, [scheduleQuery.dataUpdatedAt])
 
   useEffect(() => {
     return () => {
-      assignObject(updateScheduleStore, {
-        id: undefined,
-        name: defaultCommonScheduleStore.name,
-        days: defaultCommonScheduleStore.days,
-      })
+      updateScheduleStore.reset()
+      // assignObject(updateScheduleStore, {
+      //   id: undefined,
+      //   name: defaultCommonScheduleStore.name,
+      //   days: defaultCommonScheduleStore.days,
+      // })
     }
   }, [])
 
@@ -37,5 +39,5 @@ export default function UpdateScheduleScreen() {
     return <ActivityIndicator size={'large'} color={colors.indigo[500]} className='mt-[33vh]' />
   }
 
-  return <ScheduleViewEdit mode='edit' schedule={updateScheduleStore} />
+  return <ScheduleViewEdit scheduleStore={updateScheduleStore} />
 }

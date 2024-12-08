@@ -17,7 +17,7 @@
     "build-apk": "cd android && gradlew assembleRelease",
     "install-release": "adb install android/app/build/outputs/apk/release/app-release.apk",
     "install-debug": "adb install android/app/build/outputs/apk/debug/app-debug.apk",
-    "full": "npm run prebuild && npm run build-apk && npm run install-apk",
+    "full": "npm run prebuild && npm run build-apk && npm run install-release",
     "ios": "expo run:ios"
   },
   "dependencies": {
@@ -41,7 +41,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "fuse.js": "^7.0.0",
-    "jotai": "^2.10.3",
+    "immer": "^10.0.4",
     "lucide-react-native": "^0.460.0",
     "nativewind": "^4.1.23",
     "react": "18.2.0",
@@ -54,8 +54,9 @@
     "react-native-svg": "15.2.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.15",
-    "valtio": "^2.1.2",
-    "zod": "^3.23.8"
+    "@davstack/store": "^1.4.6",
+    "zod": "^3.23.8",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

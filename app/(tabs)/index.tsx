@@ -9,8 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { formatDistanceStrict } from 'date-fns'
 import { ru } from 'date-fns/locale/ru'
 import { Link } from 'expo-router'
-import { LucideCalendarCheck2, LucideCalendarOff, LucideDoorOpen, LucideHourglass } from 'lucide-react-native'
-import { useState } from 'react'
+import { LucideDoorOpen, LucideHourglass } from 'lucide-react-native'
 import { ActivityIndicator, Pressable, View, ViewProps } from 'react-native'
 
 export default function HomeScreen() {
@@ -20,8 +19,8 @@ export default function HomeScreen() {
     queryFn: () => querySchedule(selectedScheduleId!),
     enabled: typeof selectedScheduleId === 'number',
   })
-  const [active, setActive] = useState(false)
-  const StateIcon = active ? LucideCalendarCheck2 : LucideCalendarOff
+  // const [active, setActive] = useState(false)
+  // const StateIcon = active ? LucideCalendarCheck2 : LucideCalendarOff
 
   return (
     <View className='flex-1'>

@@ -5,10 +5,10 @@ import useSubjectsQuery from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
 import { queryKeys } from '@/query'
 import { querySchedules } from '@/schedule'
+import { store } from '@davstack/store'
 import { useQuery } from '@tanstack/react-query'
 import { LucideCalendarDays, LucideCalendarSearch, LucideSearch } from 'lucide-react-native'
 import { FlatList, ScrollView, View } from 'react-native'
-import { proxy, useSnapshot } from 'valtio'
 
 // const places = s.days.map((d) => d.lessons.map((l) => l.place)).flat()
 // const subjectsIds = s.days.map((d) => d.lessons.filter((l) => l.subject != null).map((l) => l.subject!.id)).flat()
@@ -25,19 +25,19 @@ import { proxy, useSnapshot } from 'valtio'
 
 // type Yeah  = OverrideProperties<Schedule, {days: {}[]}>
 
-const store = proxy({
+const schedulesStore = store({
   search: '',
 })
 
 export default function SchedulesScreen() {
-  const snap = useSnapshot(store)
+  const searchSnap = schedulesStore.search.use()
   const tutorsQuery = useTutorsQuery()
   const subjectsQuery = useSubjectsQuery()
   const schedulesQuery = useQuery({
     queryKey: queryKeys.schedules(),
     queryFn: () => querySchedules(),
     select: (schedules) => {
-      const search = snap.search.trim().toLowerCase()
+      const search = searchSnap.trim().toLowerCase()
       if (!search || !tutorsQuery.data || !subjectsQuery.data) {
         return schedules
       }
@@ -60,14 +60,7 @@ export default function SchedulesScreen() {
       <Text className='text-2xl mb-4 font-sans-bold text-center'>Расписания</Text>
       <Text className='font-sans text-center dark:text-neutral-500 mx-4 mb-6'>Искать можно по названию, предметам, кабинетам и преподавателям</Text>
       <View className='mx-6 mb-4 flex-row items-center'>
-        <TextInput
-          defaultValue={snap.search}
-          onChange={({ nativeEvent: { text } }) => {
-            store.search = text
-          }}
-          placeholder='Поиск...'
-          className='flex-1'
-        />
+        <TextInput defaultValue={searchSnap} onChangeText={(text) => schedulesStore.search.set(text)} placeholder='Поиск...' className='flex-1' />
         <LucideSearch strokeWidth={1} className='absolute text-neutral-500 right-5' />
       </View>
       <View className='flex-row mx-6 mb-4'>

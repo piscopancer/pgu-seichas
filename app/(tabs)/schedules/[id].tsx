@@ -17,5 +17,5 @@ export default function ViewScheduleScreen() {
     return <ActivityIndicator size={'large'} color={colors.indigo[500]} className='mt-[33vh]' />
   }
 
-  return <ScheduleViewView mode='view' schedule={scheduleQuery.data} />
+  return <ScheduleViewView schedule={scheduleQuery.data} />
 }

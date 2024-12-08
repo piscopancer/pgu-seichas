@@ -6,7 +6,6 @@ import { useColorScheme } from 'react-native'
 import { ClassNameValue, twMerge } from 'tailwind-merge'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import { DefaultColors } from 'tailwindcss/types/generated/colors'
-import { useSnapshot } from 'valtio'
 import { z } from 'zod'
 
 export type StrictOmit<T extends { [K in keyof object]: unknown }, K extends keyof T> = Omit<T, K>
@@ -92,5 +91,3 @@ export type Result<Success extends object, Errors extends [string, object?][], E
         code: Error[0]
       } & Error[1]
     }
-
-export type Snapshot<T extends object> = ReturnType<typeof useSnapshot<T>>

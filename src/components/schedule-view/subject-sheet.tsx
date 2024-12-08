@@ -1,6 +1,5 @@
 import useSubjectsQuery from '@/hooks/query/use-subjects'
 import useTutorsQuery from '@/hooks/query/use-tutors'
-import { ScheduleStore } from '@/store/schedule'
 import { colors } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
@@ -12,15 +11,16 @@ import SheetTextInput from '../sheet-text-input'
 import Text from '../text'
 import { scheduleContext } from './shared'
 
-const SubjectSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>(({ schedule }, ref) => {
+const SubjectSheet = forwardRef<BottomSheetMethods>(({}, ref) => {
   const [search, setSearch] = useState('')
-  const { sheetOpenFor } = useContext(scheduleContext)
+  const { sheetOpenFor, scheduleStore } = useContext(scheduleContext)
   const tutorsQuery = useTutorsQuery()
   const subjectsQuery = useSubjectsQuery({
     select: (s) => {
       if (!tutorsQuery.data || !search.trim()) return s
       else {
         return s.filter((s) => {
+          // TODO: add fzf
           const tutor = tutorsQuery.data.find((t) => t.id === s.tutorId)
           if (tutor && [tutor.name, tutor.surname, tutor.middlename].some((i) => i.toLowerCase().includes(search.toLowerCase().trim()))) {
             return s
@@ -43,7 +43,13 @@ const SubjectSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>
         android_ripple={{ color: colors.neutral[700] }}
         onPress={() => {
           if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-            schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = null
+            scheduleStore!.updateLesson(
+              sheetOpenFor.current.day,
+              sheetOpenFor.current.lesson
+            )({
+              subjectId: null,
+            })
+            // schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = null
             if (typeof ref === 'object') {
               ref?.current?.close()
             }
@@ -58,8 +64,8 @@ const SubjectSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>
       <BottomSheetFlatList
         scrollEnabled
         data={subjectsQuery.data ?? []}
-        renderItem={(subject) => {
-          const tutor = tutorsQuery.data?.find((t) => t.id === subject.item.tutorId)
+        renderItem={({ item: subject }) => {
+          const tutor = tutorsQuery.data?.find((t) => t.id === subject.tutorId)
 
           return (
             <Pressable
@@ -67,7 +73,13 @@ const SubjectSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>
               android_ripple={{ color: colors.neutral[700] }}
               onPress={() => {
                 if (typeof sheetOpenFor.current?.day === 'number' && typeof sheetOpenFor.current?.lesson === 'number') {
-                  schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = subject.item.id
+                  scheduleStore!.updateLesson(
+                    sheetOpenFor.current.day,
+                    sheetOpenFor.current.lesson
+                  )({
+                    subjectId: subject.id,
+                  })
+                  // schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].subjectId = subject.item.id
                   sheetOpenFor.current = undefined
                   if (typeof ref === 'object') {
                     ref?.current?.close()
@@ -75,7 +87,7 @@ const SubjectSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>
                 }
               }}
             >
-              <Text className='mb-1'>{subject.item.name}</Text>
+              <Text className='mb-1'>{subject.name}</Text>
               <Text className='dark:text-neutral-500'>{tutor ? `${tutor.surname} ${tutor.name} ${tutor.middlename}` : 'Преп. не указан'}</Text>
             </Pressable>
           )

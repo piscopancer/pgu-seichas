@@ -1,5 +1,4 @@
 import { lessonTypes, lessonTypesInfo } from '@/lesson'
-import { ScheduleStore } from '@/store/schedule'
 import { capitalizeFirstLetter, colors } from '@/utils'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
@@ -9,8 +8,8 @@ import { BottomSheet } from '../bottom-sheet'
 import Text from '../text'
 import { scheduleContext } from './shared'
 
-const LessonTypeSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore }>(({ schedule }, ref) => {
-  const { sheetOpenFor } = useContext(scheduleContext)
+const LessonTypeSheet = forwardRef<BottomSheetMethods, {}>(({}, ref) => {
+  const { sheetOpenFor, scheduleStore } = useContext(scheduleContext)
 
   if (!sheetOpenFor) return null
 
@@ -19,7 +18,13 @@ const LessonTypeSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore
       <Pressable
         onPress={() => {
           if (sheetOpenFor.current) {
-            schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = null
+            scheduleStore!.updateLesson(
+              sheetOpenFor.current.day,
+              sheetOpenFor.current.lesson
+            )({
+              type: null,
+            })
+            // schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = null
             sheetOpenFor.current = undefined
             if (typeof ref === 'object') {
               ref?.current?.close()
@@ -39,7 +44,13 @@ const LessonTypeSheet = forwardRef<BottomSheetMethods, { schedule: ScheduleStore
             <Pressable
               onPress={() => {
                 if (sheetOpenFor.current) {
-                  schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = lessonType
+                  scheduleStore!.updateLesson(
+                    sheetOpenFor.current.day,
+                    sheetOpenFor.current.lesson
+                  )({
+                    type: lessonType,
+                  })
+                  // schedule.days[sheetOpenFor.current.day].lessons[sheetOpenFor.current.lesson].type = lessonType
                   sheetOpenFor.current = undefined
                   if (typeof ref === 'object') {
                     ref?.current?.close()

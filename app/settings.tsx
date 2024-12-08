@@ -33,6 +33,25 @@ const lessonViewOptions = {
 type ScheduleView = DeviceStore['scheduleViewMode']
 
 const scheduleViewOptions = {
+  tabs: {
+    text: 'Вкладки',
+    preview: ({ selected }) => (
+      <View className='h-32 items-center justify-center'>
+        <View className='gap-1 items-center mb-3 w-1/3'>
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+          <View className='bg-neutral-700 h-1 w-full rounded-full' />
+        </View>
+        <View className='flex-row gap-1.5 p-2 rounded-xl bg-neutral-800'>
+          <View className='size-6 rounded-md bg-neutral-500' />
+          <View className='size-6 rounded-md bg-neutral-600' />
+          <View className='size-6 rounded-md bg-neutral-600' />
+        </View>
+      </View>
+    ),
+  },
   list: {
     text: 'Список',
     preview: ({ selected }) => (
@@ -50,25 +69,6 @@ const scheduleViewOptions = {
           <View className='bg-neutral-700 h-1 w-full rounded-full' />
           <View className='bg-neutral-700 h-1 w-full rounded-full' />
           <View className='bg-neutral-700 h-1 w-full rounded-full' />
-        </View>
-      </View>
-    ),
-  },
-  tabs: {
-    text: 'Вкладки',
-    preview: ({ selected }) => (
-      <View className='h-32 items-center justify-center'>
-        <View className='gap-1 items-center mb-3 w-1/3'>
-          <View className='bg-neutral-700 h-1 w-full rounded-full' />
-          <View className='bg-neutral-700 h-1 w-full rounded-full' />
-          <View className='bg-neutral-700 h-1 w-full rounded-full' />
-          <View className='bg-neutral-700 h-1 w-full rounded-full' />
-          <View className='bg-neutral-700 h-1 w-full rounded-full' />
-        </View>
-        <View className='flex-row gap-1.5 p-2 rounded-xl bg-neutral-800'>
-          <View className='size-6 rounded-md bg-neutral-500' />
-          <View className='size-6 rounded-md bg-neutral-600' />
-          <View className='size-6 rounded-md bg-neutral-600' />
         </View>
       </View>
     ),

@@ -227,7 +227,7 @@ export async function querySchedule(id: number) {
 
 export type Schedule = NonNullable<Awaited<ReturnType<typeof querySchedule>>>
 
-export async function updateSchedule(id: number, updatedSchedule: ScheduleStore) {
+export async function updateSchedule(id: number, updatedSchedule: ScheduleStore['schedule']) {
   return db.schedule.update({
     where: {
       id,

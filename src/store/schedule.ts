@@ -1,27 +1,43 @@
 import { maxLessons, weekdays } from '@/schedule'
 import { fillArray } from '@/utils'
+import { store } from '@davstack/store'
 import { Prisma } from '@prisma/client'
-import { proxy } from 'valtio'
-import { deepClone } from 'valtio/utils'
 
 /** Update if `id` is present, create otherwise */
 export type ScheduleStore = {
-  id?: number
-  name: string
-  days: (Pick<Prisma.DayCreateArgs['data'], 'id' | 'holiday' | 'independentWorkDay'> & {
-    lessons: Pick<Prisma.LessonCreateArgs['data'], 'id' | 'place' | 'type' | 'subjectId'>[]
-  })[]
+  schedule: {
+    id: number | null
+    name: string
+    days: (Pick<Prisma.DayCreateArgs['data'], 'id' | 'holiday' | 'independentWorkDay'> & {
+      lessons: Pick<Prisma.LessonCreateArgs['data'], 'id' | 'place' | 'type' | 'subjectId'>[]
+    })[]
+  }
 }
 
-export const defaultCommonSchedule: ScheduleStore = {
-  name: '',
-  days: fillArray([], weekdays.length, {
-    lessons: fillArray([], maxLessons, {}),
-  }),
+const defaultScheduleStore: ScheduleStore = {
+  schedule: {
+    id: null,
+    name: '',
+    days: fillArray([], weekdays.length, {
+      lessons: fillArray([], maxLessons, {}),
+    }),
+  },
 }
 
-export const defaultCommonScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))
+function assignScheduleStore() {
+  return store(defaultScheduleStore)
+    .actions((s) => ({
+      reset: () => s.schedule.set(defaultScheduleStore.schedule),
+      updateDay: (index: number) => s.schedule.days[index].assign,
+      updateLesson: (dayIndex: number, lessonIndex: number) => s.schedule.days[dayIndex].lessons[lessonIndex].assign,
+    }))
+    .extend((s) => ({
+      useDay: (index: number) => s.schedule.days[index].use,
+      useLesson: (dayIndex: number, lessonIndex: number) => s.schedule.days[dayIndex].lessons[lessonIndex].use,
+    }))
+}
 
-export const createScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))
+export type ScheduleStoreApi = ReturnType<typeof assignScheduleStore>
 
-export const updateScheduleStore = proxy<ScheduleStore>(deepClone(defaultCommonSchedule))
+export const createScheduleStore = assignScheduleStore()
+export const updateScheduleStore = assignScheduleStore()
